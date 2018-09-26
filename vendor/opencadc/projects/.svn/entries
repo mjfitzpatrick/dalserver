@@ -1,0 +1,106 @@
+10
+
+dir
+21
+svn://lepus-dt.dyndns.org/vo/dalserver/branches/dali/vendor/opencadc/projects
+svn://lepus-dt.dyndns.org
+
+
+
+2015-03-01T22:09:43.803823Z
+6
+dtody
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fee9630f-ab27-4798-a89f-777af5e74d6b
+
+cadcCDP
+dir
+
+cadcVOS
+dir
+
+cadcTestVOS
+dir
+
+cadcRegistry
+dir
+
+wcsLibJNI
+dir
+
+cadcDALI
+dir
+
+cadcJS
+dir
+
+cadcSIA
+dir
+
+cadcUtil
+dir
+
+cadcUWS
+dir
+
+cadcTestUWS
+dir
+
+cadcVOSI
+dir
+
+cadcSampleUWS
+dir
+
+cadcLog
+dir
+
+cadcTestServlet
+dir
+
+cadcTestTAP
+dir
+
+cadcTAP
+dir
+
+cadcSampleTAP
+dir
+
+cadcGMS
+dir
+
+cadcTAP-0.8
+dir
+
+cadcTomcat
+dir
+
+cadcSampleGMS
+dir
+
+cadcWCS
+dir
+
+cadcVOTV
+dir
+
+cadcDownloadManager
+dir
+
+cadcHCompress
+dir
+

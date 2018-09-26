@@ -1,0 +1,36 @@
+# SIAPV1 (Simple Image Access V1.0) Demo/Test Servlet
+# --------------------------------------------------------------------------- 
+
+[service]
+
+serviceName = siapv1-nvoss
+serviceClass = sia
+serviceVersion = 1.0
+description = 
+	This service provides both a null/test SIAP to test and illustrate
+	the SIAPV1 protocol without requiring any data connection, as well
+	as a JDBC-based SIAP which can provide a real SIAP service if it is
+	configured properly and provided with some SIAP metadata and an
+	associated image database.  At runtime in the test Web page, the
+	"Collection" parameter is used to select which option is executed.
+
+dataDirURL = file://localhost/d1/testData/siav1
+jdbcUrl = jdbc:mysql://tucana.tuc.noao.edu:3306
+jdbcDriver = com.mysql.jdbc.Driver
+dbType = MySQL
+dbName = nvoss
+tableName = galaxysiap
+dbUser = nvoss
+dbPassword = ****
+raColumn = ra
+decColumn = decl
+
+[servlet]
+
+servlet-name = siapv1-nvoss
+servlet-class = dalserver.sia.SiapServlet
+[init-params]
+[servlet-mapping]
+servlet-name = siapv1-nvoss
+url-pattern = /siapv1-nvoss
+

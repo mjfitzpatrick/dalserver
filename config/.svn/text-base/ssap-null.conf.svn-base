@@ -1,0 +1,23 @@
+# SSAP Null/Echo Servlet (used for testing and to demo the service interface).
+# --------------------------------------------------------------------------- 
+
+[service]
+
+serviceName = ssap-null
+serviceClass = ssa
+minorVersion = test
+description = 
+	A generic dataless SSAP service which implements the SSAP
+	interface but does not serve any actual data.  Provides a
+	base class to demonstrate the SSA protocol as well as a
+	base class for constructing actual SSAP data services.
+
+[servlet]
+
+servlet-name = ssap
+servlet-class = dalserver.ssa.SsapServlet
+[init-params]
+[servlet-mapping]
+servlet-name = ssap
+url-pattern = /ssap
+

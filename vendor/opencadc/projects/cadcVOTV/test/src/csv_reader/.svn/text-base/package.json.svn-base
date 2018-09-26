@@ -1,0 +1,9 @@
+{
+  "scripts":
+  [
+    "../../../src/www/cadcVOTV/javascript/jquery-1.8.3.min.js",
+    "../../../src/www/cadcVOTV/javascript/jquery.csv-0.71.min.js",
+    "../../../src/www/cadcVOTV/javascript/cadc.votable.js",
+    "../../../src/www/cadcVOTV/javascript/cadc.votable-reader.js"
+  ]
+}

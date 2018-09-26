@@ -1,0 +1,12 @@
+# ResultStore implementation configuration.  This ResultStore plugin
+# implementation stores files in a local directory that is served by
+# a Web server.  [DalServer TAP does not use this (it uses service
+# params instead) but keep it for the moment for testing.]
+
+[pset]
+
+pset-name = ResultStoreImpl
+description = Configuration for the file-based ResultStore plugin
+
+baseDir = /data/test/docroot/resultStoreImpl/
+baseURL = http://localhost/resultStoreImpl/

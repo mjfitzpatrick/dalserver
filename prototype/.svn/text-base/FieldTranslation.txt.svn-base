@@ -1,0 +1,244 @@
+
+The initial cut at the data-cube metadata will be parameters extracted from
+the FITS headers with a little massaging to get them into the right form.
+This table will be cast into bar-delimited form for ingestion into mySQL.
+
+The metadata will then be augmented with some custom updates, mostly in bulk 
+for an entire data subset, via SQL scripts once the data has been ingested into
+mySQL.
+
+The table below shows the mySQL schema (names and datatypes) and where the
+values will come from.  Most of these are direct FITS keywords, some require
+massaging, and some are fixed:
+
+
+|  Type        |  MySQL Column      |Value or FITS Keyword    |Core Model Parameter   |Description                                             |
+       
+ VARCHAR(100)     archiveid          Our unique identifier for
+                                     this archive is most
+                                     obviously the relative
+                                     file name.
+
+ VARCHAR(100)     obsid              <null>
+                                     
+                                     I'm going to include 
+                                     this but leave it null
+                                     to start with.  We 
+                                     should probably 
+                                     populate it base on 
+                                     some analysis of the 
+                                     archiveid file name
+                                     above plus some relative
+                                     counter.
+
+ VARCHAR(20)      format             "image/fits"              Format                  Content or MIME type of dataset
+
+ INTEGER          estsize            None, but I have the      EstSize                 Estimated dataset size (Kb)
+                                     exact file size.
+
+ INTEGER          datasetcaliblevel  "2"                       DatasetCalibLevel       ** Calibration level
+ INTEGER          datalength         NAXIS1xNAXIS2xNAXIS3      DataLength              Number of pixels
+ INTEGER          nsubarrays         "1"                       Nsubarrays              Number of image subarrays
+
+                                     we'll have to fixs this
+                                     for the one multi-HDU
+                                     file
+
+ INTEGER          naxes              NAXES                     Naxes                   Number of image axes (physical image dim)
+
+ INTEGER          naxis1             NAXIS1                    Naxis                   Length of each axis of each subarray
+ INTEGER          naxis2             NAXIS2
+ INTEGER          naxis3             NAXIS3
+ INTEGER          naxis4             NAXIS4
+
+ VARCHAR(20)      pixtype            BITPIX                    Pixtype                 Pixel datatype
+
+                                     Not explicit but probably 
+                                     meant to be a word based
+                                     on BITPIX
+
+                                     BITPIX    Pixtype
+                                     ------    -------
+                                        8   -> unsignedByte
+                                       16   -> sort
+                                       32   -> int
+                                       64   -> long
+                                      -32   -> float
+                                      -64   -> double
+
+ VARCHAR(20)      wcsaxes1           CTYPE1                    WCSAxes                 WCS axis coordinate types
+ VARCHAR(20)      wcsaxes2           CTYPE2
+ VARCHAR(20)      wcsaxes3           CTYPE3
+ VARCHAR(20)      wcsaxes4           CTYPE4
+
+ VARCHAR(30)      title              To be creatively added    Title                   ** Dataset Title
+ VARCHAR(30)      creator            via bulk SQL updates      Creator                 ** Dataset creator
+ VARCHAR(20)      collection         using values defined      Collection              ** Data collection to which dataset belongs
+ VARCHAR(20)      publisherdid       by Matthew and Ray.       PublisherDID            ** Publisher's ID for the dataset ID
+
+ VARCHAR(10)      creationtype       "pointed"                 CreationType            ** Dataset creation type
+
+ DOUBLE           spatiallocation1   CRVAL1                    SpatialLocation         Spatial Position
+ DOUBLE           spatiallocation2   CRVAL2
+
+                                     Actually, I compute the
+                                     center of the image and
+                                     will put that here.
+
+ DOUBLE           spatiallolimit1    Based on full WCS.        SpatialLoLimit          Lower bounds of image spatial coordinates
+ DOUBLE           spatiallolimit2    I calculate the four      SpatialHiLimit          Higher bounds of image spatial coordinates
+ DOUBLE           spatialhilimit1    corners of the bounding
+ DOUBLE           spatialhilimit2    polygon and will include 
+                                     those as ra1, .. dec4.
+ DOUBLE           ra1, dec1
+ DOUBLE           ra2, dec2          I also compute the exact
+ DOUBLE           ra3, dec3          image center and radial
+ DOUBLE           ra4, dec4          size can be computed from
+                                     NAXIS1, NAXIS2 and 
+ DOUBLE           ra, dec            CDELT1, CDELT2.
+
+                                     I will populate the 
+                                     canonical limits based
+                                     on the min,max of the
+                                     four corners.
+
+ DOUBLE           spatialresolution1 <null>                    SpatialResolution       Spatial resolution of data
+ DOUBLE           spatialresolution2 <null>
+
+                                     We don't have any good
+                                     spatial resolution data
+                                     so we'll leave them null
+                                     and add the pixel 
+                                     resolution as additional
+                                     columns.
+
+ DOUBLE           pixelresolution1   CDELT1                    
+ DOUBLE           pixelresolution2   CDELT2
+
+ DOUBLE           spectrallocation   <null>
+
+                                     Added for consistency
+                                     with time.  We can 
+                                     populate it if and when
+                                     we have the next two
+                                     parameters.
+
+ DOUBLE           spectralstart      Ray is going to see if    SpectralStart           Start in spectral coordinate
+ DOUBLE           spectralstop       we can come up with       SpectralStop            Stop in spectral coordinate
+ DOUBLE           spectralresolution custom transforms for     SpectralResolution      Spectral resolution FWHM
+ DOUBLE           spectralrespower   relatively small set of   SpectralResPower        Spectral resolving power
+                                     cases we have here
+
+ DOUBLE           timelocation       DATE-OBS                  TimeLocation            Midpoint of exposure on MJD scale
+ DOUBLE           timestart          <null>                    TimeStart               Start time
+ DOUBLE           timestop           <null>                    TimeStop                Stop time
+
+                                     We'll just give the
+                                     DATE-OBS string for now
+                                     as VARCHAR(20) DATEOBS
+                                     column. 
+                                     
+                                     The format issues and 
+                                     translation to MJD 
+                                     can be done in the 
+                                     database.
+
+ VARCHAR(20)      fluxaxisucd        <null>                    FluxAxisUCD             ** UCD for flux
+ VARCHAR(20)      fluxaxisunit       BUNIT                     FluxAxisUnit            ** Unit for flux
+
+                                     This is all we really 
+                                     have.  We can translate 
+                                     later if it makes sense.
+
+
+ VARCHAR(20)      polaxisucd         <null>                    PolAxisUCD              ** UCD for polarization type
+ VARCHAR(20)      polaxisenum        <null>                    PolAxisEnum             List of polarization states present
+
+                                     We don't really have
+                                     any useful information
+                                     on polarization.
+
+                  -------------                                ----------------        ------------------------------------                             
+
+ INTEGER          naxes_element      NAXES                     Naxes                   Number of axes (dimensionality)
+ INTEGER          naxis1_element     NAXIS1                    Naxis                   Length of each axis
+ INTEGER          naxis2_element     NAXIS2                    
+ INTEGER          naxis3_element     NAXIS3                    
+ INTEGER          naxis4_element     NAXIS4                    
+                  
+ VARCHAR(20)      pixtype_element    Same as pixtype           Pixtype                 Pixel datatype
+
+ INTEGER          length_element     NAXIS1xNAXIS2xNAXIS3      Length                  Array length in pixels (actual count, if sparse)
+ INTEGER          size_element       length_elementxBITPIX/8   Size                    Array length in bytes
+
+
+
+A first cut an SQL "CREATE TABLE" can be generated from the above:
+
+create table datacube (
+   archiveid          VARCHAR(50),
+   obsid              VARCHAR(20),
+   format             VARCHAR(20),
+   estsize            INTEGER,
+   datasetcaliblevel  INTEGER,
+   datalength         INTEGER,
+   nsubarrays         INTEGER,
+   naxes              INTEGER,
+   naxis1             INTEGER,
+   naxis2             INTEGER,
+   naxis3             INTEGER,
+   naxis4             INTEGER,
+   pixtype            VARCHAR(20),
+   wcsaxes1           VARCHAR(20),
+   wcsaxes2           VARCHAR(20),
+   wcsaxes3           VARCHAR(20),
+   wcsaxes4           VARCHAR(20),
+   title              VARCHAR(30),
+   creator            VARCHAR(30),
+   collection         VARCHAR(20),
+   publisherdid       VARCHAR(20),
+   creationtype       VARCHAR(10),
+   spatiallocation1   DOUBLE,
+   spatiallocation2   DOUBLE,
+   spatiallolimit1    DOUBLE,
+   spatiallolimit2    DOUBLE,
+   spatialhilimit1    DOUBLE,
+   spatialhilimit2    DOUBLE,
+   ra1                DOUBLE,
+   dec1               DOUBLE,
+   ra2                DOUBLE,
+   dec2               DOUBLE,
+   ra3                DOUBLE,
+   dec3               DOUBLE,
+   ra4                DOUBLE,
+   dec4               DOUBLE,
+   spatialresolution1 DOUBLE,
+   spatialresolution2 DOUBLE,
+   pixelresolution1   DOUBLE,
+   pixelresolution2   DOUBLE,
+   spectrallocation   DOUBLE,
+   spectralstart      DOUBLE,
+   spectralstop       DOUBLE,
+   spectralresolution DOUBLE,
+   spectralrespower   DOUBLE,
+   timelocation       VARCHAR(30),
+   timestart          DOUBLE,
+   timestop           DOUBLE,
+   fluxaxisucd        VARCHAR(20),
+   fluxaxisunit       VARCHAR(20),
+   polaxisucd         VARCHAR(20),
+   polaxisenum        VARCHAR(20),
+   naxes_element      INTEGER,
+   naxis1_element     INTEGER,
+   naxis1_element     INTEGER,
+   naxis1_element     INTEGER,
+   naxis1_element     INTEGER,
+   pixtype_element    VARCHAR(20),
+   length_element     INTEGER,
+   size_element       INTEGER
+);
+
+
+
+
+

@@ -1,0 +1,24 @@
+# Update CSV content of data models
+# ------------------------------------
+#
+# These data models are maintained in spreadsheet form, and saved to CSV
+# for inclusion in the DALServer build runtimes.  Once the CSV files are
+# updated in LIB, run one of the following commands at the root directory
+# to convert each CSV to a Java module:
+#
+# Compile CSV to Java (TODO: add this to the main build.xml to automate
+# the update):
+#
+#    java dalserver.sia.SiapKeywordFactory
+#    java dalserver.ssa.SsapKeywordFactory
+#
+# A normal Ant build will then pick up the new keyword factories, one per
+# version of each data model (this assumes that the user environment has
+# been set up as needed for a DALServer build, setting the classpath and
+# so on).
+
+cp ~/new/ivoa/sia/siapv1-imagedm.csv siapv1-keywords.csv
+cp ~/new/ivoa/siav2/imagedm-obscore.csv siapv2-keywords.csv
+cp ~/new/ivoa/ssa/ssapv11-keywords.csv ssapv1-keywords.csv
+cp ~/new/ivoa/ssa/ssapv2-keywords.csv ssapv2-keywords.csv
+

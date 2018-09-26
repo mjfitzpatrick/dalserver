@@ -1,0 +1,36 @@
+#/*+
+#************************************************************************
+#****  C A N A D I A N   A S T R O N O M Y   D A T A   C E N T R E  *****
+#*
+#*   File Name:	makestart
+#*
+#*   Purpose:
+#*	This is used by makemake to automatically create a makefile.
+#*
+#*   Date		: Aug 2, 2013
+#*
+#*   Subversion data:
+#*	$URL$
+#*	$Revision$
+#*
+#*   Programmer		: Norm Hill
+#*
+#****  C A N A D I A N   A S T R O N O M Y   D A T A   C E N T R E  *****
+#************************************************************************
+#-*/
+
+# Minify variables.
+JS_BUILD_DIR = build/www/cadcVOTV/javascript/
+YUICOMPRESSOR_JAR = /usr/cadc/external/java/dev/yuicompressor.jar
+YUICOMPRESSOR_CMD_PREFIX = java -jar $(YUICOMPRESSOR_JAR)
+
+
+
+.PHONY: clientbuild
+
+all: rsync makelinks changegr
+
+clientbuild:
+	for i in `/bin/ls -1 $(JS_BUILD_DIR)/cadc.v*.js | grep -v min\.js | tr '\n' '\0' | xargs -0 -n 1 basename`; do MIN_BASENAME=`basename $$i .js`.min.js && $(YUICOMPRESSOR_CMD_PREFIX) $(JS_BUILD_DIR)/$$i -o $(JS_BUILD_DIR)/$$MIN_BASENAME; done
+
+makelinks:  clientbuild

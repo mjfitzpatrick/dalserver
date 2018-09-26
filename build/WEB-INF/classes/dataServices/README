@@ -1,0 +1,28 @@
+DALServer-based Data Services
+----------------------------------
+
+This package contains several working data services, intended mainly to
+demonstrate how to use DALServer to implement a VO data service.
+
+    JhuSsapService.java		Reference SSAP for JHU spectrum services(*)
+    JhuSsapServlet.java
+    JhuProxyService.java	Old version of DALServer JHU proxy service
+    JhuProxyServlet.java
+
+To implement your own service, simply add modified versions of the
+"*Service.java" and "*Servlet.java" files for the appropriate service
+class (SCS, SSAP, SIAP, etc.), and modify web/WEB-INF/web.xml to
+add the new service plus set any runtime configuration parameters.
+
+Typing "ant" at the root directory will recompile the whole
+package including your new service.  Typing "ant dist" will build a
+distribution in the "dist" subdirectory.  This builds a War file in
+dist containing the servlet, which one can deploy in a Java application
+server in various ways, e.g., by running the manager code in the
+Tomcat server.
+
+(*) Note that JHU now has their own native SSAP service for the
+Sloan spectra.  This version is a proxy to provide a reference
+SSA service within the DALServer framework (the service interface,
+VOTable formatting etc. are all done with DALServer, but the actual
+data and metadata comes from JHU/SDSS).

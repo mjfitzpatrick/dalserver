@@ -1,0 +1,39 @@
+# NRAO VLA FIRST Survey - SIAV1 Prototype Servlet
+# This legacy SIAV1 service uses the SIAV2 service implementation and
+# the same ObsCore-based Image table used for SIAV2.
+# --------------------------------------------------------------------------- 
+
+[service]
+
+serviceName = siapv1-vlafirst
+serviceClass = sia
+serviceVersion = 1.0
+minorVersion = generic
+description = 
+    This servlet provides a legacy SIAV1 interface to the VLA FIRST
+    survey images.
+
+authorityID = ivo://nrao/vo
+#dataDirURL = file://localhost/home/archive/e2e/archive/results/surveys
+dataDirURL = file://localhost/d1/testData
+stagingDir = /d1/archive/vostage
+tdName = localhost
+tdLocation = localhost:7464
+cutoutTask = /d1/archive/bin/vocutout
+dbType = PostgreSQL
+jdbcUrl = jdbc:postgresql://localhost:5432/
+jdbcDriver = org.postgresql.Driver
+dbName = postgres
+dbUser = voquery
+dbPassword = ****
+tableName = first_image
+tableConfig = siapv1-vlafirst.tab
+
+[servlet]
+
+servlet-name = siapv1-vlafirst
+servlet-class = dalserver.sia.SiapServlet
+[init-params]
+[servlet-mapping]
+servlet-name = siapv1-vlafirst
+url-pattern = /siapv1-vlafirst/sync

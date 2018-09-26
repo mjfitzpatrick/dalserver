@@ -1,0 +1,98 @@
+DALServer Unit Test Execution and Development
+
+The DALServer build system includes unit tests written using JUnit
+which comes bundled with Ant.  To properly compile and run these
+tests, Ant version 1.8.x or later is recommended.  
+
+RUNNING UNIT TESTS
+==================
+
+Unit tests may be run with Ant via the "test" target: 
+
+   ant test
+
+This will compile and run the tests.  The output will look something
+like this:
+
+   Buildfile: /home/user/dalserver/build.xml
+
+   init:
+
+   test-init:
+       [mkdir] Created dir: /home/user/dalserver/build/tclasses
+
+   prepare:
+
+   compile:
+
+   compiletests:
+       [javac] Compiling 1 source file to /home/user/dalserver/build/tclasses
+
+   test:
+       [junit] Running dalserver.slap.SlapParamSetTest
+       [junit] Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.021 sec
+
+   BUILD SUCCESSFUL
+   Total time: 1 second
+  
+The test result details are written to files in the build/testreports
+directory.  If there are any test failures or errors, you can
+consult the test report file to find out what went wrong.  
+
+DEVELOPING UNIT TESTS
+=====================
+
+Unit tests are written into class files under the tests directory.
+When creating a new test, follow these practices:
+
+  o  Create a test class that tests a single source class.
+
+  o  Locate the test class in the same package as the class it is
+     testing.  (This simplifies import statements.)
+
+  o  Use tests/dalserver/slap/SlapParamSetTest.java as a model.  In
+     particular, use the annotation technique (e.g. "@Test") to
+     structure your tests.  
+
+For more information, consult the JUnit documentation available at
+http://junit.org.  
+
+Running a Single Test Class
+---------------------------
+
+The Ant build script as a few extra targets that are convenient for
+testing.  If you just want to run a single test class, try:
+
+   ant -Dtest-class=<test_class_name> testclass
+
+as in,
+
+   ant -Dtest-class=SlapParamSetTest testclass
+
+Notice that you do not need to include the package that the class
+belongs to.  
+
+Compiling a Single Class
+------------------------
+
+If you just want to compile a single test class (regardless of what
+other classes have been updated), try:
+
+   ant -Dsrc-file=<path_to_java_file> compiletestfile
+
+as in,
+
+   ant -Dsrc-file=dalserver/slap/SlapParamSetTest.java compiletestfile
+
+Note that the path is relative to the tests directory.  
+
+Similarly, if you want to compile just a single class under the src
+directory, use the "compilefile" target:
+
+   ant -Dsrc-file=dalserver/slap/SlapParamSet.java compilefile
+
+
+
+
+
+

@@ -1,0 +1,2 @@
+# scheme = <SchemeHandler impl>
+test = ca.nrc.cadc.net.TestSchemeHandler

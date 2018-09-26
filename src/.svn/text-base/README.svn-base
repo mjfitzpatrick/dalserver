@@ -1,0 +1,21 @@
+DALServer Sources
+-------------------
+
+dalserver
+	The DALServer classes.
+
+dataServices
+	Demo code for custom services, in particular the Jhu proxy SSAP
+	service.   This is an actual working service which provides a
+	nontrivial example of how to construct a SSAP data service using
+	DALServer.
+
+tasks
+	Source code for computational tasks, typically used to build
+	data products as part of the "back-end" processing system.  Most
+	back-end or cluster processing is custom, but DALServer includes
+	some generic processing capability via these tasks.  Compute
+	tasks may be implemented in any language and are not part of the
+	Java servlet per-se, but are rather run from the servlet as a
+	component of back-end processing.
+

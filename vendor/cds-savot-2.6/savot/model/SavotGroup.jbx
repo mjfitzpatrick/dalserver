@@ -1,0 +1,18 @@
+[PropertyInfo]
+description,String,false,false, , ,true,<default>
+fieldsRef,FieldRefSet,false,false, , ,true,<default>
+fieldsref,FieldRefSet,false,false, , ,false,<default>
+groups,GroupSet,false,false, , ,true,<default>
+id,String,false,false, , ,true,<default>
+name,String,false,false, , ,true,<default>
+params,ParamSet,false,false, , ,true,<default>
+paramsRef,ParamRefSet,false,false, , ,true,<default>
+paramsref,ParamRefSet,false,false, , ,false,<default>
+ref,String,false,false, , ,true,<default>
+ucd,String,false,false, , ,true,<default>
+utype,String,false,false, , ,true,<default>
+[IconNames]
+
+
+
+

@@ -1,0 +1,112 @@
+# DALServer VO Data Service Framework Configuration Files
+-----------------------------------------------------------------
+
+The files in this directory provide a working example of how to
+dyamically configure the DALServer framework for a local installation.
+
+    ivoa-dal.war	   This is a pre-built copy of the DALServer Web-app.
+
+    server.conf            Root configuration file
+    <service>.conf         Configuration file for the named service
+    <service>.tab          Table config file for the service (optional)
+
+When the DALServer framework is told to reload the service configuration
+(there are various ways this can be triggered), it reads the root
+"server.conf" file.  All other service or table configuration files
+referenced directly or indirectly from server.conf are read to build the
+final runtime configuration.  Any other files in the configuration
+directory (e.g. old or alternate versions of configurations) are ignored.
+The default file names and the location of the configuration directory can
+be modified from what is shown here if necessary.
+
+
+Quick Start
+------------
+
+The following steps will suffice to get up and going quickly.   This
+assumes that you already have a Java applications server or servlet
+container (e.g., Apache Tomcat) installed on your system using the default
+configuration.
+
+    o   Copy the ivoa-dal.war file to your Web application directory.
+	This is the "webapps" subdirectory in the Tomcat root, also known
+	as $WEB_DEPLOY if you have the environment configured (or just use
+	the application server management Web UI, if available, to install
+	the new Web-app).  Give the server a few seconds to deploy the
+	Web-app.
+
+    o	Set up your local DALServer configuration directory.  The default
+    	location of this is /opt/services/dalserver, but it can be moved
+	if necessary (instructions for this will be provided elsewhere).
+
+    o	In your Web browser, go to:
+
+	    http://localhost:8080/ivoa-dal/reload
+
+	This should load all the service defined in the server.conf file
+	in your configuration directory.
+
+    o   The provided test services should now be active and can be
+	accessed via their standard VO REST Web service interface.  The
+	page http://localhost:8080/ivoa-dal can also be used to try out
+	the included pre-built demonstration/test services.  Use these
+	to verify that things are working normally.
+
+You can now try configuring a new data service.  For example, to add a
+cone search service, copy one of the sample cone search service
+configuration files, naming it "<service-name>.conf" where <service> is
+the name of your new service, add the name of the new service to the end
+of your server.conf file, then reload the configuration as outlined
+above.  You can optionally add a "<service-name>.tab" file to customize
+the table output by the service, if desired.  This assumes that you
+already have a DBMS table loaded to be exposed via the VO cone search
+protocol.
+
+
+Examples
+---------
+
+The following should normally be left alone as they are used to verify
+basic functioning of the DALServer installation, but may be commented
+out if not needed:
+
+    scs-messier.conf       Built-in demo/test Messier catalog cone search service
+    ssap-null.conf         Built-in demo/test SSA null query service
+    slap-null.conf         Built-in demo/test SLA null query service
+
+Some sample data service configuration files (use as a template for a
+new service):
+
+    scs-vlafirst.conf	   A basic cone search service (VLA FIRST survey)
+    siapv1-vlafirst.conf   SIA (V1.0) image service for the VLA FIRST survey
+    siapv1-vlafirst.tab    An example table configuration for the above service
+    ssa-vlafirst.conf	   A fake SSA service, using the VLA FIRST metadata
+    tap-demo.conf	   A demonstation TAP service
+
+Additional service examples from our development system are provided.
+Configurations for some prototype SIA version 2 services are also
+present.  We use these for VO standards development, but they should be
+ignored for a production service deployments.  Note that multiple
+service versions can be configured for a single data collection.
+
+The VO Table Access Protocol (TAP) differs from the older service protocols
+in that the service includes multiple synchronous and asychronous servlets.
+Asynchronous execution for long running queries is available via the VO
+Universal Worker Service (UWS) protocol.  Documentation of these protocols
+is available from the VO standards and on the DALServer Web site.
+
+Configuration Files
+-------------------
+
+The service configuration files are largely self-explanatory and contain
+inline comments where needed.  More comprehensive documentation is
+available on the DALServer Web site at:
+
+    http://vaosa-vm1.aoc.nrao.edu/vo/dalserver
+
+For details on the VO standards see:  http://www.ivoa.net/Documents/
+
+DALServer was developed with support from the US Virtual Astronomical
+Observatory (USVAO) and the US National Science Foundation.  NRAO has
+kindly provided resources to host the DALServer Web site and reference
+implementation.

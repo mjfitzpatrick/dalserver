@@ -1,0 +1,127 @@
+# DALServer VO Service Framework Global Configuration
+# -------------------------------------------------------------------------
+
+
+[web-app]
+
+# Identify this instance of the DALServer Web application and its services.
+# -------------------------------------------------------------------------
+
+display-name =
+	DALServer Framework Test Configuration (TAP+UWS version)
+
+description =
+	This configuration defines a number of services used to test the
+	DALServer Framework.
+
+
+[context-params]
+
+# Web-app params passed as part of the Servlet context.
+# These are required for the primary config "reload" servlet.
+# Service application code may or may not be able to see these.
+
+# The Web-app name (should match WAR file root name).
+webAppName = ivoa-dal
+
+# The configuration directory for DALServer services.
+configDir = /opt/services/dalserver
+
+# The configuration directory for DALServer services.
+configFile = server.conf
+
+# Web-app configuration file pathname, relative to Web-app root.
+webAppConfig = /WEB-INF/web.xml
+
+# Web-app runtime classes path, relative to Web-app root.
+webAppClasses = /WEB-INF/classes
+
+
+[webapp-params]
+
+# Global context parameters for all DALServer Web-app servlets.
+# The default values provided here may be overridden in the configuration
+# for an individual service.
+# -------------------------------------------------------------------------
+
+# The baseURL for service requests that come back to the server.
+# http://vaosa-vm1.aoc.nrao.edu/ivoa-dal
+baseUrl = http://localhost:8080/ivoa-dal
+
+# Default maximum records in a request response.
+maxrecDefault = 1000
+
+# Upper limit for maxrec.
+maxrecLimit = 10000
+
+# Maxrec default for older services (deprecated).
+maxrec = 10000
+
+# The IVOA Authority ID for this data publisher.
+authorityId = ivo://nrao/vo/
+
+# The default root data storage directory for DALServer services.
+dataDirUrl = /d1/archive
+
+# The default root data staging directory for DALServer services.
+stagingDir = /d1/archive/vostage
+
+# The default MIME type of any data files returned by the service.  If the
+# parameter is omitted or "dynamic" is specified, the service will attempt
+# to determine the content type of the file.
+
+contentType = dynamic
+
+
+[services]
+
+# Service instances.  Configure your local data services here.
+# Metadata for each service instance is defined in the service config file.
+# -------------------------------------------------------------------------
+
+# Framework configuration.
+reload			# Reload the framework configuration
+
+# Built-in demo/test servlets (built into Webapp).
+scs-messier		# Built-in Messier catalog SCS service
+siap-null		# SIA null/test query service
+ssap-null		# SSA null/test query service
+
+# Local data services.
+scsVaoImage		# SCS service using VAO Image table (MySQL)
+scs-vlafirst		# SCS service using VLA FIRST Image table (PostgreSQL)
+#siapv2-vlafirst		# Initial NRAO SIAV2 prototype image service
+#siapv1-vlafirst		# SIAV1 interface to the VLAFIRST image service
+#siapv2-vlafirst-min	# Variant of siapv2-vlafirst with minimal Image table
+#ssa-vlafirst		# SSA interface for VLAFIRST (for test purposes)
+#siapv2-vao		# VAO fall 2013 prototype
+tap-demo		# Demo/test TAP service (PostgreSQL)
+
+# Some older stuff; keep around for now as examples.
+#scs-nvoss		# NVO summer school, 2008
+#siapv1-nvoss		# NVO summer school, 2008
+#ssap-jhu		# Old JHU/SDSS SSA proxy service
+
+
+[file-copies]
+
+# Files to be copied directly to the Web-app.  The local file named on the
+# left is copied to the pathname at the right, which is specified relative
+# to the Web-app root directory.  This is required (for example) to configure
+# DataSource references, and may be used to install custom Java plugin classes.
+# The following are provided as examples, but are not used in the default
+# configuration.
+# ------------------------------------------------------------------------
+
+#context.xml = META-INF/context.xml
+#FileStore.class = WEB-INF/classes/ResultStoreImpl.class
+
+
+[global-params]
+
+# Global named parameter sets (available to all services).
+# ---------------------------------------------------------
+
+pluginFactory		# Used by TAP
+resultStoreImpl		# Used by TAP
+

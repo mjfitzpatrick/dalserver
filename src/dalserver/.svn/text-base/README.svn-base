@@ -1,0 +1,171 @@
+DALServer Java Package
+D.Tody Nov-Dec 2006
+--------------------
+
+This package contains Java code for implementing IVOA Data Access
+Layer (DAL) services.  The dalserver package provides two main
+externally-callable classes for use in writing DAL services:
+RequestParams, and RequestResponse.
+
+
+RequestParams
+-------------
+
+RequestParams is used to obtain the request parameters:
+
+    RequestParams (HttpServletRequest request, ParamSet params)
+
+For example, for an SSAP request, one would call this with
+
+    SsapRequestParams params = new SsapParamSet();
+    RequestParams (request, params);
+
+and the fully processed request parameter set would be returned
+in <params>.  One would then use simple getParam(<pname>) operations
+to access individual parameters.
+
+
+RequestResponse
+---------------
+
+Given the parsed and verified input parameters to the service,
+one would then query the local archive database, and compute the
+metadata to be returned in the SSAP query response.  To return this
+metadata to the client application as a VOTable one would use the
+RequestResponse class.  For example:
+
+    SsapKeywordFactory ssap = new SsapKeywordFactory();
+    RequestResponse r = new RequestResponse();
+    String id, key;
+
+    // Set global metadata.
+    r.setDescription("Builtin test for the RequestResponse class");
+    r.setType("testResults");
+    
+    // Set some sample INFOs.
+    r.addInfo(key="QUERY_STATUS", new TableInfo(key, "OK"));
+    r.addInfo(key="POS", new TableInfo(key, "12.0,0.0"));
+
+    // TARGET component data model.
+    r.addGroup(ssap.newGroup("Target"));
+    r.addField(ssap.newField("TargetName"));
+    r.addField(ssap.newField("TargetClass"));
+    r.addField(ssap.newField("TargetRedshift"));
+
+    // DATAID component data model.
+    r.addGroup(ssap.newGroup("DataID"));
+    r.addField(ssap.newField("Title"));
+    r.addParam(ssap.newParam("Creator", "Sloan Sky Survey"));
+    r.addParam(ssap.newParam("Collection", "SDSS-DR5"));
+    r.addField(ssap.newField("CreatorDID"));
+
+    // Set the table data.
+    r.addRow();
+    r.setValue("TargetName", "target1");
+    r.setValue("TargetClass", "target1-class");
+    r.setValue("Redshift", "2.3");
+
+    // Write the RequestResponse as a VOTable.
+    OutputStream out = new FileOutputStream("_output.vot");
+    r.writeVOTable(out);
+    out.close();
+
+Ultimately, a method such as writeVOTable() in the the RequestResponse
+object would be used to format the output (a VOTable in this case)
+and return it to the client.  The RequestParams and RequestResponse
+code handels all the details of parsing the input parameters, and
+building a VOTable to represent the query response.
+
+
+Code for a sample Java servlet which does all this follows.  This
+servet can run in a Java servlet container (e.g., Apache Tomcat) The
+servlet code should work as-is.  To implement a complete service, the
+only other code required is a locally-written class which implements
+(in the case of a SSAP service) the SpectrumService interface.
+
+---- Template SsapServlet Class ----
+/*
+ * SsapServlet.java
+ * $ID*
+ */
+
+package dalserver;
+
+import java.io.*;
+import java.util.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+
+/**
+ * HTTP Servlet for the SSAP protocol.  Most of this is generic servlet
+ * code, based on the dalserver Java classes.  To build a new service only
+ * the core logic should need to be modified.
+ */
+public class SsapServlet extends HttpServlet {
+    /** Highest SSAP version supported by this servlet. */
+    private String serviceVersion = "1.0";
+
+    public void init() throws ServletException {
+        // Add any servlet initialization here.
+    }
+
+    public void destroy() {
+        // Add any servlet shutdown here.
+    }
+
+    // Handle a GET or POST request.
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        HttpSession session = request.getSession(true);
+        ResourceBundle messages =
+            (ResourceBundle) session.getAttribute("messages");
+
+        // Set headers and buffer size before accessing the Writer
+        response.setContentType("text/xml;x-votable");
+        response.setBufferSize(8192);
+
+        // Get the output stream.
+        PrintWriter out = response.getWriter();
+
+        // Get the request parameters.
+	SsapParamSet params = new SsapParamSet();
+        RequestParams reqHandler = new RequestParams(request, params);
+
+        // Verify the service version, if specified.
+        Param versionPar = params.getParam("VERSION");
+	String strval = versionPar.stringValue();
+	if (strval != null) {
+            if (!strval.equals(serviceVersion)) {
+                response.resetBuffer();
+                throw new ServletException("protocol version mismatch");
+            }
+        }
+
+        // Get the service operation to be performed.
+        Param requestPar = params.getParam("REQUEST");
+        if (requestPar == null) {
+            response.resetBuffer();
+            throw new ServletException("no operation specified");
+        }
+
+        SpectrumService service = new SpectrumService();
+	String operation = requestPar.stringValue();
+
+        if (operation.equalsIgnoreCase("queryData")) {
+            service.queryData(params, out);
+        } else if (operation.equalsIgnoreCase("getCapabilities")) {
+            // Not yet supported.
+            throw new ServletException("operation not yet supported");
+        } else
+            throw new ServletException("unrecognized operation");
+
+        out.close();
+    }
+
+    public String getServletInfo() {
+        return ("Implements the Simple Spectral Access protocol version " +
+        serviceVersion);
+    }
+}

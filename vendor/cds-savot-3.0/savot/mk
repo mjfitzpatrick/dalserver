@@ -1,0 +1,11 @@
+#!/bin/csh -x
+
+javac -cp .:/home/datalab/dalserver.21/lib/kxml2-2.3.0.jar */*.java
+
+tar cf - `find . -name \*.class` | (chdir /tmp/cds/savot ; tar xf -)
+
+(chdir /tmp ; \
+	jar cf cds-savot-3.0.jar cds ; \
+	cp cds-savot-3.0.jar ~/dalserver.21/lib/ ; \
+	)
+

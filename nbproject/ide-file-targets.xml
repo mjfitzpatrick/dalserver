@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir=".." name="DALServer-IDE">
+    <!-- TODO: edit the following target according to your needs -->
+    <!-- (more info: http://www.netbeans.org/kb/articles/freeform-config.html#debugj2se) -->
+    <import file="../build.xml"/>
+
+    <target name="debug-nb">
+        <path id="cp">
+            <!-- TODO configure the runtime classpath for your project here: -->
+	    <path refid="compile.classpath" />
+        </path>
+        <nbjpdastart addressproperty="jpda.address" name="DALServer" transport="dt_socket">
+            <classpath refid="cp"/>
+        </nbjpdastart>
+        <!-- TODO configure the main class for your project here: -->
+        <java classname="dalserver.tap.TapSchema" fork="true">
+            <classpath refid="cp"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+	    <jvmarg value="-help"/>
+        </java>
+    </target>
+
+    <target name="debug-TapSchema-Help">
+        <path id="cp">
+            <!-- TODO configure the runtime classpath for your project here: -->
+	    <path refid="compile.classpath" />
+        </path>
+        <nbjpdastart addressproperty="jpda.address" name="DALServer" transport="dt_socket">
+            <classpath refid="cp"/>
+        </nbjpdastart>
+        <!-- TODO configure the main class for your project here: -->
+        <java classname="dalserver.tap.TapSchema" fork="true">
+            <classpath refid="cp"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+	    <arg value="--help"/>
+        </java>
+    </target>
+
+    <target name="debug-CreateTapSchema">
+        <path id="cp">
+            <!-- TODO configure the runtime classpath for your project here: -->
+	    <path refid="compile.classpath" />
+        </path>
+        <nbjpdastart addressproperty="jpda.address" name="DALServer" transport="dt_socket">
+            <classpath refid="cp"/>
+        </nbjpdastart>
+        <!-- TODO configure the main class for your project here: -->
+        <java classname="dalserver.tap.TapSchema" fork="true">
+            <classpath refid="cp"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+	    <arg value="-d"/>
+	    <arg value="file:/opt/services/dalserver/ds-postgresql-admin"/>
+	    <arg value="-c"/>
+        </java>
+    </target>
+
+    <target name="debug-TapSchema-AddTable">
+        <path id="cp">
+            <!-- TODO configure the runtime classpath for your project here: -->
+	    <path refid="compile.classpath" />
+        </path>
+        <nbjpdastart addressproperty="jpda.address" name="DALServer" transport="dt_socket">
+            <classpath refid="cp"/>
+        </nbjpdastart>
+        <!-- TODO configure the main class for your project here: -->
+        <java classname="dalserver.tap.TapSchema" fork="true">
+            <classpath refid="cp"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+	    <arg value="-d"/>
+	    <arg value="file:/opt/services/dalserver/ds-postgresql-admin"/>
+	    <arg value="-s"/>
+	    <arg value="public"/>
+	    <arg value="-a"/>
+	    <arg value="first_image"/>
+        </java>
+    </target>
+
+    <target name="debug-TapSchema-VAO-Tables">
+        <path id="cp">
+            <!-- TODO configure the runtime classpath for your project here: -->
+	    <path refid="compile.classpath" />
+        </path>
+        <nbjpdastart addressproperty="jpda.address" name="DALServer" transport="dt_socket">
+            <classpath refid="cp"/>
+        </nbjpdastart>
+        <!-- TODO configure the main class for your project here: -->
+        <java classname="dalserver.tap.TapSchema" fork="true">
+            <classpath refid="cp"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+	    <arg value="-d"/>
+	    <arg value="file:/opt/services/dalserver/ds-postgresql-admin"/>
+	    <arg value="-s"/>
+	    <arg value="public"/>
+	    <arg value="-a"/>
+	    <arg value="first_image"/>
+	    <arg value="siav2model"/>
+	    <arg value="vlapipe_image"/>
+        </java>
+    </target>
+
+    <target name="debug-TapSchema-AddTapSchema">
+        <path id="cp">
+            <!-- TODO configure the runtime classpath for your project here: -->
+	    <path refid="compile.classpath" />
+        </path>
+        <nbjpdastart addressproperty="jpda.address" name="DALServer" transport="dt_socket">
+            <classpath refid="cp"/>
+        </nbjpdastart>
+        <!-- TODO configure the main class for your project here: -->
+        <java classname="dalserver.tap.TapSchema" fork="true">
+            <classpath refid="cp"/>
+            <jvmarg value="-Xdebug"/>
+            <jvmarg value="-Xrunjdwp:transport=dt_socket,address=${jpda.address}"/>
+	    <arg value="-d"/>
+	    <arg value="file:/opt/services/dalserver/ds-postgresql-admin"/>
+	    <arg value="-s"/>
+	    <arg value="tap_schema"/>
+	    <arg value="-a"/>
+	    <arg value="schemas"/>
+	    <arg value="tables"/>
+	    <arg value="columns"/>
+	    <arg value="keys"/>
+	    <arg value="key_columns"/>
+        </java>
+    </target>
+
+</project>

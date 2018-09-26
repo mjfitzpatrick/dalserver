@@ -1,0 +1,39 @@
+# NRAO VLA FIRST Survey - Dummy SSA service (pretends spectra are FITS images)
+# This V2 prototype (spring 2014) uses an ObsCore-based Image table.
+# --------------------------------------------------------------------------- 
+
+[service]
+
+serviceName = ssa-vlafirst
+serviceClass = ssa
+serviceVersion = 1.1
+minorVersion = generic
+description = 
+    This servlet provides a SSA interface to the VLA FIRST survey images.
+    It pretends that the FITS images are spectrum datasets, and is used
+    merely to exercise the SSA service implementation.
+
+authorityID = ivo://nrao/vo
+dataDirURL = file://localhost/d1/testData
+stagingDir = /d1/archive/vostage
+cutoutTask = /d1/archive/bin/vocutout
+tdName = localhost
+tdLocation = localhost:7464
+dbType = PostgreSQL
+jdbcUrl = jdbc:postgresql://localhost:5432/
+jdbcDriver = org.postgresql.Driver
+dbName = postgres
+dbUser = voquery
+dbPassword = ****
+tableName = first_image
+#tableConfig = ssa-vlafirst.tab
+
+[servlet]
+
+servlet-name = ssa-vlafirst
+servlet-class = dalserver.ssa.SsapServlet
+[init-params]
+[servlet-mapping]
+servlet-name = ssa-vlafirst
+url-pattern = /ssa-vlafirst/sync
+

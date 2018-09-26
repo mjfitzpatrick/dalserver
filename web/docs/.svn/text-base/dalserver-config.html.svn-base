@@ -1,0 +1,1150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+  
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>dalserver-config.html</title></head><body>
+<h1><a class="mozTocH1" name="mozTocId698136"></a>DALServer Configuration</h1>
+<ul id="mozToc"><!--mozToc h1 1 h2 2 h3 3 h4 4 h5 5 h6 6--><li><a href="#mozTocId698136">DALServer Configuration</a><ul><li><a href="#mozTocId453866">Introduction</a><ul><li><a href="#mozTocId212104">Configuration Reload</a></li><li><a href="#mozTocId692598">Configuration File Syntax</a></li><li><a href="#mozTocId824310">Changing the Configuration Directory</a></li></ul></li><li><a href="#mozTocId772163">Global Configuration</a><ul><li><a href="#mozTocId741112">Web Application Parameters</a></li><li><a href="#mozTocId458818">Global Servlet Context Parameters</a></li><li><a href="#mozTocId911240">Configured Servlets</a></li></ul></li><li><a href="#mozTocId613517">Service Instance Configuration</a><ul><li><a href="#mozTocId865646">Servlet Definition
+</a></li><li><a href="#mozTocId351663">Table Configuration</a></li><li><a href="#mozTocId278230">Database Access</a></li><li><a href="#mozTocId325334">Bulk Data File Access</a></li><li><a href="#mozTocId74443">Virtual Data Generation and Tasking
+</a></li></ul></li><li><a href="#mozTocId939216">Configuring Specific Service Types
+</a><ul><li><a href="#mozTocId923969">Simple Cone Search (SCS)</a></li><li><a href="#mozTocId849631">Simple Image Access (SIA)</a></li><li><a href="#mozTocId617129">Simple Spectrum Access (SSA)</a></li><li><a href="#mozTocId927739">Spectral Line List Access (SLA)</a></li></ul></li><li><a href="#mozTocId626742">Data Ingest and Metadata Generation</a></li><li><a href="#mozTocId879817">References</a></li></ul></li></ul>
+
+<h2><a class="mozTocH2" name="mozTocId453866"></a>Introduction</h2>
+
+
+<p>All configuration of the DALServer Webapp and all local data service
+instances is controlled by text files contained in the local
+configuration directory, by default <span style="font-family: monospace;">/opt/services/dalserver</span> (see<span style="text-decoration: underline;"> <a href="#Changing_the_Configuration_Directory">Changing the Configuration Directory</a> </span><a href="#Changing_the_Configuration_Directory"><span style="text-decoration: underline;"></span></a>if a
+different directory is to be used).&nbsp; A single file (<span style="font-family: monospace;">server.conf)</span>
+defines all global configuration parameters and links to configuration
+files for any locally defined services.&nbsp; Each configured service
+requires a configuration file to define the service parameters; an
+optional table configuration file maybe used to customize the output of
+the service.<br>
+<br>
+The configuration mechanism described here assumes a default
+configuration of the Java applications server, e.g., Tomcat.&nbsp; In
+particular, Webapps are assumed to be unpacked into a directory tree
+containing the individual files, and the application server is assumed
+to automatically reload the Webapp configuration if the <span style="font-family: monospace;">web.xml</span>
+file is modified (it is this file that is rewritten whenever a reload
+is performed).&nbsp; These semantics are the default for a typical
+installation of a Java application server.&nbsp; If the application
+server is customized it should still be possible to set things up so
+that service configuration works simply, however the details of the
+custom configuration are left up to the local Web administrator.</p>
+
+<h3><a class="mozTocH3" name="mozTocId212104"></a>Configuration Reload</h3>
+
+
+Whenever the configuration is modified, or the DALServer Webapp has
+been redeployed, the local configuration must be reloaded.&nbsp; This
+is done by executing the "reload" Webapp resource, e.g.,<br>
+
+<br>
+
+<div style="margin-left: 40px;"><a href="http://localhost:8080/ivoa-dal/reload">
+http://localhost:8080/ivoa-dal/reload</a></div>
+
+<br>
+
+The new configuration will be parsed and reloaded by the running
+DALServer Webapp.&nbsp; A summary of the services defined by the new
+configuration is printed upon a successful reload, otherwise an error
+message is printed (note the timestamp at the bottom to verify that the
+reload actually executed, as execution should<br>
+be nearly instantaneous).&nbsp; It may take a few seconds for the application server to discover that
+the Webapp configuration has been modified, and reload it; what a reload actually does, is rewrite the file <span style="font-family: monospace;">WEB-INF/web.xml</span>
+in the deployed Webapp.&nbsp; If somehow an unrecoverable error occurs
+that renders the Webapp inoperable, a redeploy followed by a reload
+will restore things to an operable state.<br>
+<br>
+In the examples thus far, reload is shown being used without any
+protection against unauthorized configuration reloads.&nbsp; While this
+is convenient for configuring a new system, a simple password
+protection mechanism is provided which should be enabled on a
+production system.&nbsp; To enable password protection for
+configuration reload, ensure that the global system parameter <span style="font-family: monospace;">configKey</span>
+is uncommented and set to some value other than "none".&nbsp; For
+example, if configKey is set to "foo", reload would be invoked as
+follows:<br>
+<br>
+
+
+<div style="margin-left: 40px;"><a href="http://localhost:8080/ivoa-dal/reload">
+http://localhost:8080/ivoa-dal/reload?key=foo</a><br>
+</div>
+
+
+<br>
+Password (key) values are case-sensitive.&nbsp; Passwords are stored in
+clear text in the configuration files hence read protecting the
+configuration directory is advisable, much as the application server
+directories and files should be read protected.&nbsp; A common approach
+is to run the application server on a special dedicated account, with
+owner or group read permission enabled on the dalserver configuration
+directory for this account.<br>
+
+
+<h3><a class="mozTocH3" name="mozTocId692598"></a>Configuration File Syntax</h3>
+
+Configuration files are simple text files, following typical formatting
+conventions as shown in the example below:<br>
+
+<div style="background-color: rgb(255, 255, 204);">
+<pre>[standard]<br><br># Table configuration for an SCS service is optional and is used only to<br># enhance the query response.  For SCS we are working with an existing table,<br># and are limited to setting VO metadata for the table fields, or omitting<br># selected fields.<br># --------------------------------------------------------------------------- <br><br># Add/modify VO metadata for selected table fields.<br>obsid           utype=DataID.ObservationID<br>format          utype=Access.Format<br>estsize         utype=Access.Size ucd=meta.number unit=kB<br>datalength      utype=Dataset.Length ucd=meta.number unit=pixels<br>nsubarrays      utype=Image.Nsubarrays ucd=meta.number<br>naxes           utype=Image.Naxes ucd=meta.number<br>naxis1          utype=Image.Naxis ucd=meta.number<br>naxis2          utype=Image.Naxis ucd=meta.number<br>naxis3          utype=Image.Naxis ucd=meta.number<br>naxis4          utype=Image.Naxis ucd=meta.number<br>pixtype         utype=Image.Pixtype<br><br># This demonstrates multiple line continuation and quoted string values.<br>spatiallocation1 id=ra name=ra descr="RA at center of field"\<br>                utype = Char.SpatialAxis.Coverage.Location.Coord.Position2D.Value2.C1\<br>                ucd = pos.eq.ra;meta.main unit=deg<br>spatiallocation2 id=dec name=dec\<br>                utype=Char.SpatialAxis.Coverage.Location.Coord.Position2D.Value2.C2\<br>                ucd=pos.eq.dec;meta.main unit=deg<br><br>spectralstart   id=em_min name=em_min utype=Char.SpectralAxis.Coverage.Bounds.Limits.LoLimit ucd=em.wl;stat.min unit=m<br>spectralstop    id=em_max name=em_max utype=Char.SpectralAxis.Coverage.Bounds.Limits.HiLimit ucd=em.wl;stat.max unit=m<br>timestart       id=t_min name=t_min utype=Char.TimeAxis.Coverage.Bounds.Limits.StartTime ucd=time.start;obs.exposure unit=mjd<br>timestop        id=t_max name=t_max utype=Char.TimeAxis.Coverage.Bounds.Limits.StopTime ucd=time.stop;obs.exposure unit=mjd<br></pre>
+</div>
+
+A configuration file may contain multiple sections or contexts,
+indicated by square brackets as in "[<span style="font-style: italic;">context-name</span>]";
+the example shown defines parameters for a new context named
+"standard".&nbsp; Blank lines and comment lines are
+ignored.&nbsp;&nbsp; A comment begins with "#" and extends to the end
+of a line.<br>
+
+<br>
+
+A configuration context defines one or more named parameters, each
+specified on a separate line.&nbsp; Long lines may be continued across
+multiple lines by placing a backslash at the end of a line.&nbsp; A
+parameter and its value may be specified as either "<span style="font-style: italic;">parameter = value</span>" or as "<span style="font-style: italic;">parameter value"</span>,
+i.e., the "=" is optional.&nbsp; The parameter value may be omitted if
+the parameter does not require a value or a null value is
+desired.&nbsp; If the "=" is the last character on a line the value is
+taken as the following line or lines, terminated by a blank line.&nbsp;
+Parameter values are specified as either a single value, or as one or
+more keyword=value attributes.&nbsp; Attribute values strings should be
+quoted if they contain whitespace or special metacharacters such as "=".<br>
+
+<br>
+
+In practice the configuration file syntax should be familiar and
+intuitive, and should be obvious for the most part from the examples.<br>
+
+<h3><a class="mozTocH3" name="mozTocId824310"></a><a name="Changing_the_Configuration_Directory"></a>Changing the Configuration Directory</h3>The default configuration directory location is <span style="font-family: monospace;">/opt/services/dalserver</span>.&nbsp; This value is stored in the global DALServer configuration parameter <span style="font-family: monospace;">configDir</span> in server.conf.&nbsp;
+To use a different configuration directory, edit the value of configDir
+and do a configuration reload, directing reload to read from the new
+configuration directory.&nbsp; For example, to change the configuration
+directory to <span style="font-family: monospace;">/u1/config-test,</span> edit <span style="font-family: monospace;">/u1/config-test/server.conf </span>and change the value of configDir to <span style="font-family: monospace;">/u1/config-test,</span> then do a new reload as follows:<br>
+<dl>
+  <dd><a href="http://localhost:8080/ivoa-dal/reload&amp;configDir=/u1/config-test"><span style="font-family: monospace;">http://localhost:8080/ivoa-dal/reload&amp;configDir=/u1/config-test</span></a></dd>
+</dl>
+After that, all subsequent reloads will automatically use the new
+configuration directory (redeploying the Webapp will reset the default
+value of configDir).<br>
+<br>
+Other global configuration parameters can be temporarily overridden by
+specifiying them as URL parameters in this fashion.&nbsp; For example,
+to output a new configuration to a temporary file (e.g., for ease of inspection
+or debugging), reload can be invoked setting the value of the parameter
+<span style="font-family: monospace;">webAppConfig</span> to the pathname of the Webapp XML configuration file to be output.<br>
+
+
+
+
+
+<h2><a class="mozTocH2" name="mozTocId772163"></a>Global Configuration</h2>
+
+
+Global configuration is performed by editing the file <span style="font-family: monospace;">server.conf </span>in
+the configuration directory.&nbsp; This file defines all global
+configuration parameters or properties, plus a list of all configured
+local services.&nbsp; The most important global configuration
+parameters are summarized below.&nbsp; Refer to the template
+server.conf in the
+configuration directory for detailed
+documentation on the individual parameters.<br>
+<br>
+When a reload is
+performed the configuration subsystem will read server.conf
+as well as the configuration files for any locally defined services
+referenced therein.&nbsp; All other files in the configuration
+directory are ignored (e.g., template files, or temporary copies of
+local service configuration files are ignored).<br>
+<h3><a class="mozTocH3" name="mozTocId741112"></a>Web Application Parameters</h3>
+The Webapp parameters ("[web-app]" context) should be customized to
+describe the DALServer Webapp instance as used in your local system.<br>
+<dl>
+  <dd>
+    <table style="text-align: left; width: 750px; height: 66px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top; width: 150px; text-align: center;"><span style="font-style: italic;">Parameter</span><br>
+          </th>
+          <th style="vertical-align: top; text-align: center;"><span style="font-style: italic;">Description</span><br>
+          </th>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>display-name<br>
+          </small></td>
+          <td style="vertical-align: top;">The title of your DALServer instance as it will appear in a Web browser.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>description<br>
+          </small></td>
+          <td style="vertical-align: top;">A brief description of your server instance.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </dd>
+</dl>
+<h3><a class="mozTocH3" name="mozTocId458818"></a>Global Servlet Context Parameters</h3>
+The global context parameters ("[context-params]" context) define
+global parameters that may affect the behavior of all servlets.<br>
+
+<dl>
+<dd>
+    <table style="text-align: left; width: 749px; height: 171px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top; width: 150px; text-align: center;"><span style="font-style: italic;">Parameter</span><br>
+          </th>
+          <th style="vertical-align: top; text-align: center;"><span style="font-style: italic;">Description</span><br>
+          </th>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>webAppName<br>
+
+          </small></td>
+          <td style="vertical-align: top;">The Webapp root filename, e.g., "ivoa-dal".<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>baseUrl<br>
+
+          </small></td>
+          <td style="vertical-align: top;">The static part of URLs that come back to the server, e.g., dataset access URLs.<br>
+          </td>
+        </tr><tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>configDir<br>
+          </small></td>
+          <td style="vertical-align: top;">The configuration directory, containing all local configuration files.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>configFile<br>
+          </small></td>
+          <td style="vertical-align: top;">The name of the root configuration file, e.g, "server.conf".<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top;"><small><span style="font-family: Helvetica,Arial,sans-serif;">configKey</span></small><br>
+          </td>
+          <td style="vertical-align: top;">Set to a value other than "none" to enable password protection for reload.<br>
+          </td>
+        </tr>
+<tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>webAppConfig<br>
+          </small></td>
+          <td style="vertical-align: top;">The relative pathname of the Webapp runtime configuration XML file output by a reload.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>authorityId<br>
+          </small></td>
+          <td style="vertical-align: top;">The IVOA authority ID (registered data publisher) for your site.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>dataDirUrl</small></td>
+          <td style="vertical-align: top;">The default root directory pathname for dataset storage.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>stagingDir<br>
+          </small></td>
+          <td style="vertical-align: top;">The default directory for dynamically staging data products.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>contentType<br>
+          </small></td>
+          <td style="vertical-align: top;">The MIME type of returned datasets, or "dynamic" to have this determined dynamically.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>maxrec<br>
+          </small></td>
+          <td style="vertical-align: top;">The default maximum number of records returned in response to a query.<br>
+          </td>
+        </tr>
+
+      </tbody>
+    </table></dd>
+</dl>
+Some of these parameters, e.g., dataDirUrl and stagingDir, define
+default values that are typically overridden in the configuration of a
+specific service.<br>
+
+
+<h3><a class="mozTocH3" name="mozTocId911240"></a>Configured Servlets</h3>
+The final section of server.conf lists the servlets to be
+configured.&nbsp; For each servlet in the list there must be a
+corresponding servlet configuration (".conf") file with the same root
+name.&nbsp; For example:<br>
+
+
+<div style="background-color: rgb(255, 255, 204);">
+<pre>[servlets]<br><br># Service instances.  Configure your local data services here.<br># Metadata for each service instance is defined in the service config file.<br># -------------------------------------------------------------------------<br><br># Framework configuration.<br>reload                  # Reload the framework configuration<br><br># Built-in demo/test servlets (built into Webapp).<br>scs-messier             # Built-in Messier catalog SCS service<br>siap-null               # SIA null/test query service<br>ssap-null               # SSA null/test query service<br><br># Local data services.<br>scsVaoImage             # SCS service using VAO Image table (MySQL)<br>scs-vlafirst            # SCS service using VLA FIRST Image table (PostgreSQL)<br>siapv2-vlafirst         # Initial NRAO SIAV2 prototype image service<br>siapv1-vlafirst         # SIAV1 interface to the VLAFIRST image service<br>siapv2-vlafirst-min     # Variant of siapv2-vlafirst with minimal Image table<br>ssa-vlafirst            # SSA interface for VLAFIRST (for test purposes)<br>siapv2-vao              # VAO fall 2013 prototype<br></pre>
+</div>
+
+
+The <span style="font-family: monospace;">reload</span> servlet should
+always be defined; this is required to reload the framework
+configuration (if this is lost for some reason, it can be recovered by
+redeploying the DALServer Webapp).&nbsp; Likewise the built-in
+demo/test servlets should be retained to facilitate testing.&nbsp; All
+other servlets listed refer to local data services.<br>
+
+<h2><a class="mozTocH2" name="mozTocId613517"></a>Service Instance Configuration</h2>
+
+
+Every service instance requires a service (servlet) configuration
+(<span style="font-family: monospace;">.conf</span>) file, and may
+optionally have a table configuration (<span style="font-family: monospace;">.tab</span>) file as well.&nbsp; In
+addition, any parameters defined globally in the server.conf file will be
+available in all service instances.<br>
+
+<br>
+
+The root name of the service configuration file must match that given
+in the server.conf file.&nbsp; For example, if a service is referenced
+as "scs-abell" in server.conf, the corresponding service configuration
+file will be "scs-abell.conf".&nbsp; The table configuration file if
+any is explicitly referenced in the service configuration hence may
+have any name, but the convention is for the root name to be the same
+as the service configuration file, e.g., "scs-abell.tab".<br>
+
+<h3><a class="mozTocH3" name="mozTocId865646"></a>Servlet Definition<br>
+</h3>Every service (servlet) requires a service configuration (.<span style="font-family: monospace;">conf</span>) file.&nbsp; A service configuration file has the following sections or contexts:<br>
+
+<dl>
+<dd>
+    <table style="text-align: left; width: 750px; height: 66px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top; width: 150px; text-align: center;"><span style="font-style: italic;">Context</span><br>
+          </th>
+          <th style="vertical-align: top; text-align: center;"><span style="font-style: italic;">Description</span><br>
+          </th>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>servlet<br>
+          </small></td>
+          <td style="vertical-align: top;">The name and description of the servlet, and the Java class to be called when the servlet is invoked.<br>
+</td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>init-params<br>
+          </small></td>
+          <td style="vertical-align: top;">Servlet-defined parameters to be passed in to the servlet when it is initialized.<br>
+</td>
+        </tr><tr>
+          <td style="vertical-align: top;"><small><span style="font-family: Helvetica,Arial,sans-serif;">servlet-mapping</span></small><br>
+          </td>
+          <td style="vertical-align: top;">Maps the named servlet onto a HTTP endpoint.<br>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </dd>
+</dl>
+
+An example of a very basic servlet is the configuration "reload" servlet, which is defined as follows:<br>
+<div style="background-color: rgb(255, 255, 204);">
+<pre># Servlet configuration.<br><br>[servlet]<br><br># A small servlet to reload the DALServer framework configuration.<br># --------------------------------------------------------------------------- <br><br>servlet-name = reload<br>servlet-class = dalserver.Config<br>description = <br>        Reload the Web-app configuration<br><br><br>[init-params]<br><br># Servlet parameters (passed into servlet at runtime)<br># ---------------------------------------------------------------------------<br><br><br>[servlet-mapping]<br><br># Map the servlet to an HTTP endpoint<br># ---------------------------------------------------------------------------<br><br>servlet-name = reload<br>url-pattern = /reload<br></pre>
+</div>
+This defines a servlet named "reload", mapped to the service endpoint
+"/reload" (the leading "/" is required), which calls the Java class <span style="font-family: monospace;">dalserver.Config</span>
+when invoked.&nbsp; Unlike more complex servlet classes, this servlet
+has no servlet-specific init params, although it does inherit all
+global context parameters.&nbsp; Note the syntax of the <span style="font-family: monospace;">description</span>
+parameter, which illustrates a simple alternative way to have the value
+of a parameter extend over multiple lines of text without having to
+escape the newline on each line.&nbsp; A blank line terminates the
+block of text, and leading whitespace is reduced to a single space.<br>
+
+
+<h3><a class="mozTocH3" name="mozTocId351663"></a>Table Configuration</h3>Most
+VO data access services are table-oriented.&nbsp;&nbsp; One or more
+database tables are used to drive the service, the service performs a
+query of some sort, returning a table result to the client.&nbsp; The
+table configuration mechanism is used to control the mapping between
+the underlying DBMS table, and the query response table returned to the
+client.<br>
+<br>
+Table configuration (customisation might be a better term) is optional
+in all cases.&nbsp; By default, services just copy data from an input
+table of some sort to the output query response table.&nbsp; Table
+configuration is used to modify this default behavior, omitting certain
+fields, adding other custom locally-defined fields, changing the names
+of the fields either in the input DBMS table or in the query response
+table, or adding additional VO-specific metadata to selected output
+table fields.&nbsp; Table configuration is thus merely a concise delta
+on the default operation, which is a copy of standard metadata.&nbsp;
+Depending upon the type of service, the input DBMS
+table may be an arbitrary DBMS table such as an astronomical catalog,
+or a
+table that implements a standard schema or data model, such as the
+<span style="font-style: italic;">Image</span> table used to drive an image access service, or the <span style="font-style: italic;">Spectrum</span>
+table used to drive a spectrum service (more on these later).<br>
+<br>
+Table configuration is done on a per-service basis using the optional table configuration (.<span style="font-family: monospace;">tab</span>) file.&nbsp; A table configuration file has the following sections or contexts:<br>
+
+
+<dl>
+<dd>
+    <table style="text-align: left; width: 750px; height: 66px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top; width: 150px; text-align: center;"><span style="font-style: italic;">Context</span><br>
+          </th>
+          <th style="vertical-align: top; text-align: center;"><span style="font-style: italic;">Description</span><br>
+          </th>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>table<br>
+          </small></td>
+          <td style="vertical-align: top;">The name, class (data model if any), and description of the database table to be accessed.<br>
+</td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>standard<br>
+          </small></td>
+          <td style="vertical-align: top;">A list of standard fields that require special processing, and the processing required.<br>
+</td>
+        </tr><tr>
+          <td style="vertical-align: top;"><small><span style="font-family: Helvetica,Arial,sans-serif;">custom</span></small><br>
+          </td>
+          <td style="vertical-align: top;">A list of custom fields to be copied to the output, and any processing required.<br>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </dd>
+</dl>The following is a simplified example of a table configuration
+file, in this
+case for an Image service (SIAV1) for the VLA FIRST image
+data collection (a prototype SIAV2 interface can also be exposed - more on that later):<br>
+<div style="background-color: rgb(255, 255, 204);">
+<pre># SIA Image table configuration<br><br>[table]<br><br># NRAO VLA FIRST Survey - SIAV1 Servlet<br># ---------------------------------------------------------------------------<br><br>table-name = first_image<br>table-class = image.vao.mar2014<br>description =<br>    SIAV1 service using the prototype ObsCore-based Image table (March2014).<br><br>[standard]<br><br># Custom processing for standard fields of Image table.<br># ---------------------------------------------------------------------------<br><br># This field (std name at left) in the DBMS Image table is misspelled.<br>em_res_power            col=em_respower<br><br># Omit the following standard fields as these are not used.<br>obs_creator_did         omit<br>obs_dataset_did         omit<br>pol_ucd                 omit<br><br>[custom]<br><br># Pass through the following custom fields from the DBMS table.<br># ---------------------------------------------------------------------------<br><br>project_code            # Use all default attributes<br>file_set_id             name=fileset_id datatype=char ucd=meta.id<br></pre>
+</div>
+This table configuration, for an image service using the standard Image
+table to describe the input data collections, passes through all
+standard Image table fields unchanged except those specified in the
+"standard" context.&nbsp; The standard field <span style="font-family: monospace;">em_res_power</span>
+is mapped to a nonstandard (in this case acidentally misspelled) DBMS table field but is
+otherwise unmodified, and several standard fields for which no values
+are available are marked to be omitted.&nbsp; Two custom data-provider
+defined fields are called out to be propagated to the output table, one
+with some standard VO metadata attributes (name, datatype, ucd)
+added.&nbsp; All other DBMS table fields are propagated to the output
+unchanged.<br>
+<br>
+Fields referenced in the "<span style="font-weight: bold;">standard</span>" context may be either omitted,
+mapped to nonstandard DBMS table columns ("col" attribute), or may be
+assigned custom VOTable metadata values ("name", "id", "datatype",
+"unit", "ucd", etc.).&nbsp; Otherwise standard DBMS table fields are
+propagated unchanged.&nbsp; The DBMS table fields may contain null
+values in which case the fields are still output, but with a null value.<br>
+<br>
+Fields referenced in the "<span style="font-weight: bold;">custom</span>" context are additional, data-provider
+defined custom fields to be added to the output table.&nbsp; These must
+be present in the input DBMS table to be copied to the output, but
+additional VO-specific attributes (UCD etc.) may be added via the table
+configuration mechansim.&nbsp; This is especially useful for cone
+search services that expose the contents of unmodified native DBMS
+tables containing astronomical source catalogs.<br>
+<br>
+This is a fairly complex example of a table configuration file.&nbsp;
+The most common example is probably for when an astronomical catalog is
+exposed via a cone search, in which case one merely adds standard VO
+metadata for selected important table fields, referenced in the
+"custom" context of the configuration file (for the mandatory cone
+search fields the extra metadata is added automatically).&nbsp;
+"Custom", data provider-provided and collection-specified metadata is
+most important for image and spectrum data collections - this allows the standard VO data models to be extended to more fully
+describe a specific data collection.<br>
+<br>
+The table field attributes available are the standard VOTable field
+attributes, plus "omit" and "colname", which are specific to the table
+configuration mechanism:<br>
+
+
+
+<dl>
+<dd>
+    <table style="text-align: left; width: 750px; height: 66px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top; width: 150px; text-align: center;"><span style="font-style: italic;">Attribute</span><br>
+          </th>
+          <th style="vertical-align: top; text-align: center;"><span style="font-style: italic;">Description</span><br>
+          </th>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>omit<br>
+          </small></td>
+          <td style="vertical-align: top;">Omit the named standard field from the output table.<br>
+</td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>colname<br>
+          </small></td>
+          <td style="vertical-align: top;">The name of the DBMS table field to be used, if different from the standard field name.<br>
+</td>
+        </tr><tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>id</small><br>
+          </td>
+          <td style="vertical-align: top;">The ID name for the field in the output table (this and the following are for VOTable).<br>
+</td>
+        </tr><tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>name<br>
+          </small></td>
+          <td style="vertical-align: top;">The NAME for the field in the output table (arbitrary user-oriented field name).<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>unit<br>
+          </small></td>
+          <td style="vertical-align: top;">The unit for the field.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>ucd<br>
+          </small></td>
+          <td style="vertical-align: top;">The UCD for the field, to identify the type of physical property.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>utype<br>
+          </small></td>
+          <td style="vertical-align: top;">The UTYPE for the field, to identify the field of a data model, if any.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>xtype<br>
+          </small></td>
+          <td style="vertical-align: top;">The XTYPE for the field, an extended type used for applications such as TAP.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>description<br>
+          </small></td>
+          <td style="vertical-align: top;">A brief description of the field.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>datatype<br>
+          </small></td>
+          <td style="vertical-align: top;">The VOTable-defined primitive datatype of the field.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>arraysize<br>
+          </small></td>
+          <td style="vertical-align: top;">The array length for array-valued fields, or "*" for variable length fields.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>width<br>
+          </small></td>
+          <td style="vertical-align: top;">The suggested field width for formatting floating values.<br>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>precision<br>
+          </small></td>
+          <td style="vertical-align: top;">The suggested precision for formatting floating values.<br>
+          </td>
+        </tr>
+
+
+      </tbody>
+    </table>
+  </dd>
+</dl>
+Standard fields are most commonly omitted when valid metadata is not
+available for the data collection being published, in which case
+null-valued fields would be output, which is harmless but clutters up the output
+table.&nbsp; The longer attribute names may be shortened if desired,
+e.g., "col" instead of "colname", "desc" or "descr" instead of
+"description", and so forth (at least three characters are required).<br>
+<br>
+In most cases the VOTable attributes do not have to be specified for
+output table fields.&nbsp; For services based upon a standard data
+model, e.g, image
+and spectrum services, these attributes are defined by the standard
+data model and will be automatically filled in by the service code;
+table configuration may however be used to override the defaults.&nbsp;
+For
+custom fields, and for cone search where arbitrary tables are exposed,
+most fields do not have any predefined VO attributes, and attributes
+may be assigned values to provide extended metadata for selected output
+table fields.<br>
+<h3><a class="mozTocH3" name="mozTocId278230"></a>Database Access</h3>
+All data services are table driven, requiring access to a database
+table.&nbsp; For the image and spectrum services this table describes
+the data collection to be accessed, including standard metadata
+describing each dataset in the collection, and for cone search the
+database table, typically an astronomical source catalog, is itself the
+data to be returned.&nbsp; Configuration is required to tell DALServer
+how to access the database management system (DBMS), and what content
+to access therein.<br>
+<br>
+
+The following servlet<span style="font-style: italic;"> init-params</span> are used to configure database access for a data service:<br>
+
+
+
+
+<dl>
+<dd>
+    <table style="text-align: left; width: 750px; height: 66px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top; width: 150px; text-align: center;"><span style="font-style: italic;">Parameter</span><br>
+          </th>
+          <th style="vertical-align: top; text-align: center;"><span style="font-style: italic;">Description</span><br>
+          </th>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>dbType<br>
+          </small></td>
+          <td style="vertical-align: top;">The DBMS type (currently, MySql, PostgreSQL, or Oracle).<br>
+</td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>jdbcUrl<br>
+          </small></td>
+          <td style="vertical-align: top;">The JDBC URL used to access the remote DBMS.<br>
+</td>
+        </tr><tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>jdbcDriver</small><br>
+          </td>
+          <td style="vertical-align: top;">The class information used to load the Java DBMS connector.<br>
+</td>
+        </tr><tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>dbName<br>
+          </small></td>
+          <td style="vertical-align: top;">The name of the "database" to be accessed.<br>
+</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>dbUser<br>
+          </small></td>
+          <td style="vertical-align: top;">The login user name used to access the DBMS.<br>
+</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>dbPassword<br>
+          </small></td>
+          <td style="vertical-align: top;">The password for the given user login name.<br>
+</td>
+        </tr>
+        <tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>tableName<br>
+          </small></td>
+          <td style="vertical-align: top;">The name of the database table to be accessed.<br>
+</td>
+        </tr><tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>tableConfig</small><br>
+          </td>
+          <td style="vertical-align: top;">The name of the table configuration/customisation file, if any.<br>
+          </td>
+        </tr>
+
+        
+        
+        
+        
+        
+        
+
+
+      </tbody>
+    </table>
+  </dd>
+</dl>
+Other servlet init-params may be defined by a service class, but these
+are the standard parameters used to configure access to the primary
+database table used to drive a service.<br>
+<br>
+The standard Java Database Connector (JDBC) interface is used to access
+the DBMS.&nbsp; In most cases the values given in the template
+configuration files will suffice to access a locally configured DBMS,
+once the database type, server name, login name and password,
+"database" name and table name are determined (what a "database" is
+depends upon the DBMS type).&nbsp; Configuration of the JDBC interface
+to the DBMS itself is standardized and well documented, but is beyond
+the scope of this document - in most cases merely modifying the
+provided templates, and studying the examples, will
+suffice.&nbsp;&nbsp; Typically a special user login, e.g., "voquery" or
+some such, should be set up locally to have read-only access to at
+least the VO DBMS tables to be accessed by the VO services.<br>
+<h3><a class="mozTocH3" name="mozTocId325334"></a>Bulk Data File Access</h3>
+Bulk data files such as large image datasets may be stored in a file
+system accessible to the data service, or in a separate storage
+subsystem.&nbsp; Files stored in a file system are directly accessed by
+a file URL (file pathname).&nbsp; Files stored in a separate storage
+subsystem are identified by a unique ID assigned by the storage
+subsystem, and are accessed via a service interface configured as a
+back-end service.&nbsp; Direct access via a file system is simple, and
+will suffice for many simpler use cases.&nbsp; The storage subsystem
+approach is more complex, but may provide features such as storage
+virtualization (how and where a file is stored is abstracted and hidden
+from the client), authenticated file access control, greater
+scalability, redundant storage capabilities and automated backup, and
+so forth.<br>
+<br>
+The current version of DALServer fully implements file system-based
+file access; support for storage subsystems is not yet fully
+implemented.&nbsp; Data services construct bulk data file references
+from the following metadata elements:<br>
+<dl>
+<dd><table style="text-align: left; width: 750px; height: 66px;" border="1" cellpadding="1" cellspacing="1"><tbody><tr><th style="vertical-align: top; width: 150px; text-align: center;"><span style="font-style: italic;">Item</span><br>
+</th><td style="vertical-align: top; width: 110px; text-align: center;"><span style="font-weight: bold; font-style: italic;">Type</span><br>
+          </td>
+<th style="vertical-align: top; text-align: center;"><span style="font-style: italic;">Description</span><br>
+          </th>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>dataDirUrl<br>
+          </small></td>
+          <td style="vertical-align: top;">servlet parameter<br>
+          </td>
+<td style="vertical-align: top;">The root directory (file URL) where bulk data for the collection is stored<br>
+</td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>archive_id<br>
+          </small></td>
+          <td style="vertical-align: top;">table field<br>
+          </td>
+<td style="vertical-align: top;">The path to an individual data file relative to dataDirUrl<br>
+</td>
+        </tr>
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+
+      </tbody>
+    </table>
+  </dd>
+</dl>
+The file pathname for a given data file is constructed by appending the value of <span style="font-style: italic;">archive_id</span> to <span style="font-style: italic;">dataDirUrl</span>,&nbsp;
+unless archive_id is an absolute pathname, in which case dataDirUrl is
+not used.&nbsp; The file pathname is constructed dynamically and is
+only used internally; it is never exposed to the client (in effect
+DALServer implements a simple storage virtualization scheme for
+file-based internal storage).&nbsp; Note that dataDirUrl may differ for
+each data collection.&nbsp; The value of archive_id for each referenced
+dataset is stored in the database table describing the data collection.
+When support for external storage subsystems is added, archive_id will
+instead be the unique ID of the data file within the external storage
+subsystem, if use of an external storage subsystem is enabled (basic
+file system access is fundamental and will always be available).<br>
+<h3><a class="mozTocH3" name="mozTocId74443"></a>Virtual Data Generation and Tasking<br>
+</h3>
+Some service types, e.g., for image and spectral data, are optionally capable of <span style="font-style: italic;">virtual data generation</span>,
+where the service dynamically computes a new data product to better
+match what was requested by the client.&nbsp; Generation of an image
+cutout, extraction of the region about a spectral line, or just
+conversion to a different data format are all possible examples of
+virtual data generation.&nbsp; Virtual data generation may require use
+of the <span style="font-weight: bold; font-style: italic;">tasking subsystem</span> to execute external tasks to compute data products.<br>
+<br>
+A full description of the tasking subsystem is beyond the scope of the
+current document, however basic configuration is not difficult.&nbsp;
+The details of how the tasking subsystem is used depends upon the
+service type, but in simple cases the following configuration
+parameters are used:<br>
+
+<dl>
+<dd><table style="text-align: left; width: 750px; height: 66px;" border="1" cellpadding="1" cellspacing="1"><tbody><tr><th style="vertical-align: top; width: 150px; text-align: center;"><span style="font-style: italic;">Parameter</span><br>
+</th>
+<th style="vertical-align: top; text-align: center;"><span style="font-style: italic;">Description</span><br>
+          </th>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>tdName<br>
+          </small></td>
+          
+<td style="vertical-align: top;">The logical name for the tasking daemon to be used.<br>
+</td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>tdLocation<br>
+          </small></td>
+          
+<td style="vertical-align: top;">The network location (host and port) of the tasking daemon to be used.<br>
+</td>
+        </tr><tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>stagingDir</small></td>
+          <td style="vertical-align: top;">The pathname of the staging directory, where virtual data products are to be placed.<br>
+          </td>
+        </tr>
+
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+
+      </tbody>
+    </table>
+  </dd>
+</dl>
+The <span style="font-weight: bold; font-style: italic;">tasking daemon</span>
+is a daemon process that is responsible for running tasks and
+monitoring and controlling task or job execution on a specific host
+computer, computational node, or cluster.&nbsp; The details of how
+tasks are used by a service implementation are usually internal to the
+service implementation and do not require configuration at this
+level.&nbsp; In a complex configuration there may be multiple tasking
+daemons in use on multiple hosts, however for many simple
+configurations a single tasking daemon running on the localhost may
+suffice.&nbsp; Task execution is asynchronous, and a single tasking
+daemon may simultaneously execute multiple tasks.&nbsp; The tasking
+daemon runs indefinitely (usually for the lifetime of a loaded
+servlet), and will be automatically started by the service code if it
+is not already running.&nbsp; Multiple clients (e.g., servlet
+instances) may simultaneously share the same tasking daemon.<br>
+<br>
+The syntax of the <span style="font-family: monospace;">tdLocation</span> parameter is <span style="font-style: italic;">&lt;host&gt;:&lt;port&gt;, </span>and
+the default port for the tasking daemon is 7464 ("td").&nbsp; For the
+case of a tasking daemon running on the localhost on the default port,
+tdLocation would have the value "<span style="font-family: monospace;">localhost:7464</span>".&nbsp;
+The value of tdName is arbitrary, and is not critical unless the
+service class uses multiple tasking daemons, in which case the tasking
+daemons (used for different purposes) are identified by their logical
+tdName.<br>
+<br>
+The staging directory is where the service puts dynamically generated
+data products or related dynamically generated files.&nbsp; The client
+will access these files just as they do static archival files, however
+files in the staging area may have a limited lifetime (typically days
+or weeks), and older files may need to be deleted periodically to
+control disk space consumption.<br>
+<br>
+The tasking daemon<span style="font-weight: bold; font-style: italic;">,</span>
+and the tasks available for a given service class, may need to be
+compiled and built, and deployed, before they can be used by the
+service framework.&nbsp; This is not difficult, but the details of how
+this is done will be addressed elsewhere (e.g., in a README file in the
+source directory, or in a future version of this documentation).&nbsp;
+The tasking code that ships integrated with DALServer will be found in <span style="font-family: monospace;">src/tasks</span>.&nbsp;
+Note, tasking and virtual data generation are optional advanced
+capabilities and do not need to be configured for basic service
+execution.<br>
+<h2><a class="mozTocH2" name="mozTocId939216"></a>Configuring Specific Service Types<br>
+</h2>
+<h3><a class="mozTocH3" name="mozTocId923969"></a>Simple Cone Search (SCS)</h3>In
+the case of simple cone search, a DBMS table, typically an astronomical
+catalog, is queried to find objects within a specified spatial radial
+distance of a given position ("cone" region on the sky), returning the
+results to the client.&nbsp; Defining such a service requires basic
+servlet configuration, database access configuration to specify how to
+access the desired catalog, as well as specification of the DBMS table
+fields to be used to drive the query.&nbsp; For cone search these
+additional table fields are the following:<br>
+
+
+
+
+
+<dl>
+<dd>
+    <table style="text-align: left; width: 750px; height: 66px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <th style="vertical-align: top; width: 150px; text-align: center;"><span style="font-style: italic;">Parameter</span><br>
+          </th>
+          <th style="vertical-align: top; text-align: center;"><span style="font-style: italic;">Description</span><br>
+          </th>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>idColumn<br>
+          </small></td>
+          <td style="vertical-align: top;">The name of the DBMS table column to be used to uniquely identify each table row.<br>
+</td>
+        </tr>
+        <tr>
+          <td style="font-family: Helvetica,Arial,sans-serif;"><small>raColumn<br>
+          </small></td>
+          <td style="vertical-align: top;">The name of the  DBMS table column specifying the table row right ascension.<br>
+</td>
+        </tr><tr>
+          <td style="vertical-align: top; font-family: Helvetica,Arial,sans-serif;"><small>decColumn</small><br>
+          </td>
+          <td style="vertical-align: top;">The name of the DBMS table  column specifying the table row declination.<br>
+</td>
+        </tr>
+        
+        
+        
+
+        
+        
+        
+        
+        
+        
+
+
+      </tbody>
+    </table>
+  </dd>
+</dl>
+Usually each table row describes a single astronomical object, although
+this does not have to be the case.&nbsp; Right ascension and
+declination should be specified as decimal degrees in the ICRS
+coordinate system (sexagesimal format in ICRS is also supported but due
+to the text-to-numeric conversion required will be inefficient for
+other than small tables).&nbsp; Currently there is no support for
+spatial coordinate frames other than ICRS; in some cases it may be
+necessary to add ICRS columns to a table to make it queryable (possibly
+also an ID field).&nbsp; Large tables should ideally be sorted in
+either RA or DEC, with an index over the sorted column, to speed up
+searches for large tables.<br>
+<br>
+The VO cone search standard requires that table output support the
+VOTable format, and this is the default for a cone search service,
+however additional output table formats are available as well if
+requested by the client, e.g., HTML, pretty-printed text, and CSV.<br>
+<br>
+A table configuration file is not required for a cone search service,
+except to provide richer VO metadata for table fields (UCD, unit,
+description, etc.).&nbsp; The framework automatically determines basic
+information such as the list of table fields, and the field name and
+basic datatype of each field, from the DBMS.&nbsp; VO metadata is
+automatically generated only for the ID, RA, and DEC fields.&nbsp; If
+additional metadata is desired this must be input via the table
+configuration mechanism.<br>
+<br>
+An example of a cone search service follows (some of the DBMS connection information is blanked out).&nbsp; In this case
+the database table describing the images in the VLA legacy pipeline
+image collection is being exposed as a cone search serviace, providing
+a catalog of VLA imaging observations.<br>
+
+<div style="background-color: rgb(255, 255, 204);">
+<pre># Servlet configuration.<br><br>[servlet]<br><br># SCS (Simple Cone Search) Servlet for the VLA legacy pipeline images<br># --------------------------------------------------------------------------- <br><br>servlet-name = scs-vlapipe<br>servlet-class = dalserver.scs.ScsServlet<br>description = <br>        This servlet provides a simple cone search (SCS) service for the<br>        VLA FIRST survey image table.<br><br>[init-params]<br><br># Servlet parameters (passed into servlet at runtime)<br># ---------------------------------------------------------------------------<br><br>serviceName = scs-vlapipe<br>serviceClass = scs<br>serviceVersion = 1.0<br><br>dbType = PostgreSQL<br>jdbcUrl = jdbc:postgresql://ssstestdb.aoc.nrao.edu:5432/<br>jdbcDriver = org.postgresql.Driver<br>dbName = archive<br>dbUser = *****<br>dbPassword = *****<br>tableName = vlapipe_image<br>idColumn = id<br>raColumn = s_ra<br>decColumn = s_dec<br><br>[servlet-mapping]<br><br># Map the servlet to an HTTP endpoint<br># ---------------------------------------------------------------------------<br><br>servlet-name = scs-vlapipe<br>url-pattern = /scs-vlapipe<br></pre>
+</div>
+Aside from the usual servlet configuration parameters, what we have
+here is the DBMS connection information, the name of the database table
+to be queried and exposed via the SCS protocol, and the names of the
+ID, RA, and DEC fields of the table to be used for queries.
+<h3><a class="mozTocH2" name="mozTocId849631"></a>Simple Image Access (SIA)</h3>The Simple Image Access (SIA) protocol defines a <span style="font-style: italic;">discovery query</span>,
+used to discover image datasets matching user-specified query
+constraints, as well as a way to retrieve or <span style="font-style: italic;">download</span> selected image
+datasets.&nbsp; A SIA service provides discovery and retrieval of image
+data from a specific image <span style="font-style: italic;">data collection</span>;
+such a data collection might be all the images at a site, all the
+images from a specific instrument or survey, and so forth.&nbsp;
+Implementing the discovery query requires that metadata describing all
+image datasets in the collection be present in a database table that
+can be queried by the service.<br>
+<br>
+
+For DALServer, the required database table describing the data collection is known as the <span style="font-weight: bold; font-style: italic;">Image Table.&nbsp; </span>The
+image table contains one row for every image dataset (file, of any format) available
+from the service.&nbsp; Standard metadata describes the characteristics of
+each image and tells the service how to access the referenced file.&nbsp;
+The image table has a <a href="image-table.pdf">standard schema</a> based mainly upon the IVOA <a href="http://www.ivoa.net/documents/ObsCore/">Observation Core Components</a> data model.<br>
+<br>
+Configuring an image service thus requires the following items:<br>
+<ul>
+  <li>The basic service configuration (the service .conf file).</li>
+  <li>An Image table (<span style="font-family: monospace;">table_name</span> parameter) describing the datasets comprising the image collection.</li>
+  <li>Optionally, a table configuration file (.tab file) to customize the query response output by the service.<br>
+  </li>
+</ul>
+
+The image table data model defines a fairly rich set of <span style="font-weight: bold; font-style: italic;">standard metadata </span>to
+describe each image dataset.&nbsp; While the content of this table
+should be populated as fully as possible, most fields can be set to
+null if valid values are not available.&nbsp; All defined standard
+fields should be physically present in the database table even if their values are null, to ensure that
+SQL queries against the table are valid (if the SQL query used
+internally references a table field that is not present that is a hard
+error, whereas a null value is acceptable).<br>
+<br>
+The standard table
+may be extended with collection-specific, data provider-defined
+<span style="font-weight: bold; font-style: italic;">custom metadata</span>
+if desired, to more fully describe the image datasets exposed by the
+service.&nbsp; The table configuration mechanism can be
+used to pass-through custom metadata to the output query response table
+if desired.&nbsp; Standard metadata fields can be flagged to be omitted
+from the query response table, e.g., if they will always have null
+values.&nbsp; By omitting selected standard fields and adding
+additional custom metadata the output query response table may be
+customized as desired, taking the standard SIA query response as the
+starting point. <br>
+<br>
+While full VO metadata is always desirable, it is possible to make use
+of non-standard DBMS tables to describe the data
+collection.&nbsp;&nbsp; It is possible to rename table fields via table
+configuration, and the only image table fields that absolutely have to
+be present are those required to service a runtime discovery query, and
+access the discovered datasets.&nbsp; For example, if the service were
+to only support spatial queries (this is the minimum required for a
+legacy SIA version 1.0 service), then the minimal set of fields
+required would be <span style="font-family: monospace;">id, archive_id,</span> and <span style="font-family: monospace;">access_format</span> (for access) and i<span style="font-family: monospace;">m_naxis1, im_naxis2, im_scale, s_ra</span>, and <span style="font-family: monospace;">s_dec</span>
+(for discovery via a spatial query constraint).&nbsp; The table to be
+used must contain at least this metadata, but the table fields can be
+renamed via table configuration if required.<br>
+<br>
+The DALServer SIA service implementation is <span style="font-weight: bold; font-style: italic;">multi-version</span>.&nbsp;
+The SIA protocol versions currently supported are SIA version 1.0
+(legacy SIA,which is what virtually all current client applications
+require), and a prototype SIA version 2, providing advanced support for
+multi-dimensional image cubes, dynamic cutouts, direct access to large
+image datasets via the prototype <span style="font-style: italic;">accessData</span>
+method, and so on.&nbsp; Both of these, and future IVOA standard SIA
+versions, can be simultaneously supported from the same service
+configuration and image table, meaning that future SIA versions can be
+supported with minimal impact on the data provider, merely by updating
+the DALServer Webapp to a new version.&nbsp; Legacy SIA can be
+supported while prototyping advanced multi-dimensional image
+visualization and access, without having to modify the metadata
+required for a given image data collection.&nbsp; The default service
+version supported is 1.0, unless otherwise specified in the service
+configuration.&nbsp; The <span style="font-family: monospace;">VERSION</span> parameter is supported to permit dynamic protocol version specification / verification by the client.<br>
+<br>
+An example of the main configuration for a SIA service follows:
+
+<div style="background-color: rgb(255, 255, 204);">
+<pre># Servlet configuration.<br><br>[servlet]<br><br># NRAO VLA FIRST Survey - SIAV1 Servlet<br># This legacy SIAV1 service uses the SIAV2 service implementation and<br># the same ObsCore-based Image table used for SIAV2.<br># --------------------------------------------------------------------------- <br><br>servlet-name = siapv1-vlafirst<br>servlet-class = dalserver.sia.SiapServlet<br>description = <br>    This servlet provides a legacy SIAV1 interface to the VLA FIRST<br>    survey images.<br><br>[init-params]<br><br># Servlet parameters (passed into servlet at runtime)<br># ---------------------------------------------------------------------------<br><br>serviceName = siapv1-vlafirst<br>serviceClass = siap<br>serviceVersion = 1.0<br>minorVersion = generic<br>authorityID = ivo://nrao/vo<br>#dataDirURL = file://localhost/home/archive/e2e/archive/results/surveys<br>dataDirURL = file://localhost/d1/testData<br>stagingDir = /d1/archive/vostage<br>tdName = localhost<br>tdLocation = localhost:7464<br>cutoutTask = vocutout<br><br>dbType = PostgreSQL<br>jdbcUrl = jdbc:postgresql://localhost:5432/<br>jdbcDriver = org.postgresql.Driver<br>dbName = postgres<br>dbUser = ******<br>dbPassword = ******<br>tableName = first_image<br>tableConfig = siapv1-vlafirst.tab<br><br><br>[servlet-mapping]<br><br># Map the servlet to an HTTP endpoint<br># ---------------------------------------------------------------------------<br><br>servlet-name = siapv1-vlafirst<br>url-pattern = /siapv1-vlafirst/sync<br></pre>
+</div>
+This configuration sets the default service version to 1.0.&nbsp; The
+service enables the virtual data capability, identifying the separately
+configured tasking daemon and the task to be used for image
+cutouts.&nbsp; A PostgreSQL DBMS is used, with <span style="font-family: monospace;">first_image</span> being the Image table to be accessed.&nbsp; A table configuration file is provided (this was shown in an earlier <a href="#mozTocId351663">example</a>).
+
+<h3><a class="mozTocH2" name="mozTocId617129"></a>Simple Spectrum Access (SSA)</h3>The
+DALServer SSA service implementation is very similar to that for
+SIA.&nbsp; A single SSA instance can expose multiple versions of the
+service interface and data model; the default is the current SSA
+standard interface, version 1.1.&nbsp; Like SIA, the generic SSA
+implementation is driven by a <a href="spectrum-table.pdf">Spectrum Table</a>
+listing and describing all spectrum datasets in the collection to be
+exposed by the service.&nbsp; Tasking is supported, e.g., to
+dynamically compute spectral line cutouts, however since spectral
+datasets come in many formats it is up to the data provider to provide
+an external task to compute virtual spectra.&nbsp; The current SSA
+implementation can only serve up archival spectral datasets (archive
+files), i.e., dynamically serializing spectra in multiple output
+formats is not yet supported.<br>
+<br>
+
+
+
+<h3><a class="mozTocH2" name="mozTocId927739"></a>Spectral Line List Access (SLA)</h3>VO
+defines a Spectral Line List Protocol (SLAP) for querying spectral line
+lists.&nbsp; The SLAP service implementation differs from the other
+DALServer service types in that it is not fully data-driven.&nbsp; A
+generic SLAP service implementation is provided, but must be subclassed
+at the Java code level to implement an actual SLAP data
+service.&nbsp;&nbsp; The contents of the output query response table
+are based upon the IVOA SLAP standard but are normally customized for a
+specific spectral line list.&nbsp; An XML file (see for example <span style="font-family: monospace;">lib/slap-keywords.xml</span>)
+describes what will appear in the output query response table.&nbsp;
+The subclassed Java code for the service performs the query, and makes
+a number of <span style="font-style: italic;">RequestResponse.setValue</span>
+calls to populate the metadata for each row of the output table.&nbsp;
+The easiest way to implement a SLAP service is probably to get the
+source for an existing service (e.g., the NRAO/ALMA Splatalog service),
+and modify this as needed for the new spectral line list.<br>
+
+<h2><a class="mozTocH2" name="mozTocId626742"></a>Data Ingest and Metadata Generation</h2>
+While configuring a new data service is pretty easy, generation of
+valid VO metadata for a data collection can be quite a bit of work,
+requiring&nbsp; significant scientific knowledge of what constitutes
+valid metadata.&nbsp; Some tools to help with data ingest and metadata
+generation are available, but are incomplete and are not yet packaged
+in an easy to use form.&nbsp; For help with data ingest, please contact
+the authors to determine the current status of the available data
+ingest and metadata generation tools.<br>
+
+<h2><a class="mozTocH2" name="mozTocId879817"></a>References</h2>
+<ol>
+  <li><a href="http://vaosa-vm1.aoc.nrao.edu/vo/dalserver">DALServer VO Service Framework</a><br>
+  </li>
+  <li><a href="image-table.pdf">Image Table</a></li>
+  <li><a href="spectrum-table.pdf">
+Spectrum Table</a></li>
+  <li><a href="http://www.ivoa.net/Documents/latest/ConeSearch.html">
+Simple Cone Search Specification (SCS)</a></li>
+  <li><a href="http://www.ivoa.net/Documents/SIA/20091116/">
+Simple Image Access Specification (SIA)</a></li>
+  <li><a href="http://www.ivoa.net/documents/SSA/20120210/">
+Simple Spectrum Access Specifcation (SSA)</a></li>
+  <li><a href="http://www.ivoa.net/Documents/SLAP/20101209/">
+Spectral Line List Access Specification (SLA)</a></li>
+  <li><a href="http://www.ivoa.net/Documents/VOTable/20130920/">
+VOTable Specification</a></li>
+</ol>
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<br>
+<br>
+
+<!--
+<div style="background-color: rgb(255, 255, 204);">
+<pre>
+</pre>
+</div>
+-->
+
+
+
+
+
+
+
+</body></html>

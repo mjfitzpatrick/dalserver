@@ -1,0 +1,20 @@
+#!/bin/csh -f
+#
+#  Usage:
+#	   % ./reload_schema <schema> <table> [ <table> .... ]
+
+
+set schema 	= $1
+set db 		= "tapdb"
+set PSCMD	= "psql -d ${db} -U datalab"
+
+# Remove existing entries in the TAP_SCHEMA
+$PSCMD -c "delete from tap_schema.schemas where schema_name = '$schema'"
+$PSCMD -c "delete from tap_schema.tables where schema_name = '$schema'"
+$PSCMD -c "delete from tap_schema.columns where (table_name like '${schema}.%')"
+$PSCMD -c "delete from tap_schema.keys where (from_table like '${schema}.%')"
+$PSCMD -c "delete from tap_schema.keys where (target_table like '${schema}.%')"
+
+# Now reload the TAP schema
+ant TapSchema -Dargs="-d file:tap.props -s $schema -a $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15 $16 $17 $18 $19 $20"
+

@@ -1,0 +1,33 @@
+iNamik TableFormatter for Java v0.96.0 (March 2 2008)
+
+Version History
+===============
+
+Changes in v0.96.0
+
+	*	Added example java file "TestTableFormatter.java"
+
+	*	Moved TODO section from VERSION.txt into TODO.txt
+
+	*	Minor build changes
+
+Changes in v0.95.0
+
+	*	Bumped version to 0.95.0 in preparation for FreshMeat.net release.
+
+	*	Updated build files to match new build patterns since last change.
+	    - Project name moved to build.properties
+	    - Build & Dist folders now include project name+version
+
+	*	Updated Eclipse build script to refresh project after build.
+
+Changes in v0.9.1
+
+	*	Revamped the entire Interface
+		Changed to be more 'cell' oriented
+
+	*	Made a little more generic to give the user more options.
+
+Changes in v0.9.0
+
+	*	All development up to this point :)

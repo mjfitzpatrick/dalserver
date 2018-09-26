@@ -1,0 +1,64 @@
+<!-- 
+  -  VAO prototype database loading script
+  -->
+<project name="VAO-prototype" default="testloaded" basedir=".">
+
+  <property name="proto.home"    value="${basedir}"/>
+  <property name="db.host" value="localhost"/>
+  <property name="db.user" value=""/>
+  <property name="db.pass" value=""/>
+  <property name="db.bin"  value=""/>
+  <property name="db.name"  value="siav2proto"/>
+  <property name="db.dropcmd"  value="DROP DATABASE ${db.name};"/>
+  <property environment="env"/>
+
+  <target name="checkprops" 
+          description="make sure some required properties are set">
+    <fail message="Please provide username/pw via -Ddb.name -Ddb.pass">
+      <condition>
+        <or>
+          <length string="${db.user}" trim="true" when="eq" length="0"/>
+          <length string="${db.pass}" trim="true" when="eq" length="0"/>
+        </or>
+      </condition>
+    </fail>
+  </target>
+
+  <target name="loaddb" description="load the database" depends="checkprops">
+    <!-- <echo message="${db.user} - ${db.pass} - ${db.bin}"/> -->
+    <exec executable="${proto.home}/loaddb.sh" failonerror="true">
+      <env key="SIAV2_PROTO_USER" value="${db.user}"/>
+      <env key="SIAV2_PROTO_PASS" value="${db.pass}"/>
+      <env key="SIAV2_PROTO_DBHOST" value="${db.host}"/>
+      <env key="PATH" path="${db.bin}:${env.PATH}"/>
+    </exec>
+  </target>
+
+  <target name="dropdb" description="drop the database" depends="checkprops">
+    <echo message="${db.dropcmd}"/>
+    <exec executable="mysql" failonerror="true" searchpath="true"
+          inputstring="${db.dropcmd}">
+      <arg value="-u${db.user}"/>
+      <arg value="-p${db.pass}"/>
+      <arg value="${db.name}"/>
+      <arg value="${db.host}"/>
+      <env key="PATH" path="${db.bin}:${env.PATH}"/>
+    </exec>
+  </target>
+
+  <target name="clean" description="clean up intermediate build artifacts">
+    <delete file="${proto.home}/updateSpectral.sql"/>
+  </target>
+
+  <target name="distclean" description="clean up all build artifacts"
+          depends="clean">
+  </target>
+
+  <target name="try">
+    <echo message="basedir=${basedir}"/>
+  </target>
+
+
+  
+
+</project>

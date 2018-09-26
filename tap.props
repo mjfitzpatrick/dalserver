@@ -1,0 +1,10 @@
+name:jdbc/tapuser
+type:javax.sql.DataSource 
+auth:Container
+username:datalab
+password:datalab
+driverClassName:org.postgresql.Driver
+url:jdbc:postgresql://localhost:5432/tapdb
+maxActive:20
+maxIdle:10
+validationQuery:select 1

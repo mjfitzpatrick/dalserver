@@ -1,0 +1,21 @@
+<HTML><HEAD>
+<TITLE>SLAP Parameters</TITLE>
+</HEAD><BODY>
+<TABLE width=700 align=center>
+<TR><TD colspan=3 align=center bgcolor="LightGray">SLAP Parameters</TD></TR>
+<TR><TD>VERSION</TD><TD>[STRING]</TD><TD>SLAP protocol version</TD></TR>
+<TR><TD>REQUEST</TD><TD>[STRING]</TD><TD>Operation to be performed</TD></TR>
+<TR><TD>WAVELENGTH</TD><TD>[FLOAT, ORDERED, RANGELIST]</TD><TD>Range of allowable line wavelengths (meters)</TD></TR>
+<TR><TD>CHEMICAL_ELEMENT</TD><TD>[STRING, RANGELIST]</TD><TD>Desired chemical elements</TD></TR>
+<TR><TD>INITIAL_LEVEL_ENERGY</TD><TD>[FLOAT, ORDERED, RANGELIST]</TD><TD>Energy range for initial level of transition (Joules)</TD></TR>
+<TR><TD>FINAL_LEVEL_ENERGY</TD><TD>[FLOAT, ORDERED, RANGELIST]</TD><TD>Energy range for final level of transition (Joules)</TD></TR>
+<TR><TD>TEMPERATURE</TD><TD>[FLOAT]</TD><TD>Temperature of object (Kelvin)</TD></TR>
+<TR><TD>EINSTEIN_A</TD><TD>[FLOAT, ORDERED, RANGELIST]</TD><TD>Range of allowable transition probabilities (s^-1)</TD></TR>
+<TR><TD>PROCESS_TYPE</TD><TD>[STRING]</TD><TD>Physical process type</TD></TR>
+<TR><TD>PROCESS_NAME</TD><TD>[STRING]</TD><TD>Physical process which generated this line</TD></TR>
+<TR><TD>FORMAT</TD><TD>[STRING]</TD><TD>Desired output data format</TD></TR>
+<TR><TD>Maxrec</TD><TD>[INTEGER]</TD><TD>Maximum number of output records</TD></TR>
+<TR><TD>Compress</TD><TD>[BOOLEAN]</TD><TD>Allow dataset compression</TD></TR>
+<TR><TD>RunID</TD><TD>[STRING]</TD><TD>Runtime job ID string</TD></TR>
+</TABLE>
+</BODY></HTML>

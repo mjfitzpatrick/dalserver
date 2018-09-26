@@ -1,0 +1,102 @@
+# DALServer Demonstration TAP Service
+# Demonstrates how to configure a TAP service.
+# ----------------------------------------------
+
+[service]
+
+serviceName = tap-demo
+serviceClass = tap
+serviceVersion = 1.0
+minorVersion = generic
+description = DALServer Demonstration TAP Service
+
+authorityID = ivo://nrao/vo
+baseDir = /d1/testData/resultStore
+baseURL = http://localhost/data/resultStore/
+
+# Default DataSource to be used for queries.  Here jdbc/userdata
+# includes RO access to everything that jdbc/tapuser does, plus
+# protected access to the user's MyDB tables.
+#queryDataSource = jdbc/tapuser
+queryDataSource = jdbc/userdata
+
+# Default DataSource to be used to upload tables.
+#uploadDataSource = jdbc/tapuploadadm
+uploadDataSource = jdbc/userdata
+
+# DataSource to be used for user (MyDB) tables (read-write; optional)
+userDataSource = jdbc/userdata
+
+# DataSource to be used to add tables to the TAP Schema (read-write;
+# optional).  At present there is one global TAP_SCHEMA per database.
+# A per-user TAP_SCHEMA is possible but not yet implemented.
+adminDataSource = jdbc/tapadmin
+
+[servlet]
+
+servlet-name = SyncServlet
+servlet-class = ca.nrc.cadc.uws.server.SyncServlet
+description = Synchronous access to JobManager service
+load-on-startup = 2
+[init-params]
+ca.nrc.cadc.uws.server.JobManager = dalserver.tap.TapJobManager
+ca.nrc.cadc.uws.server.SyncServlet.execOnGET = true
+ca.nrc.cadc.uws.server.SyncServlet.execOnPOST = false
+[servlet-mapping]
+servlet-name = SyncServlet
+url-pattern = /tap-demo/sync/*
+
+[servlet]
+
+servlet-name = AsyncServlet
+servlet-class = org.restlet.ext.servlet.ServerServlet
+description = Asynchronous access to JobManager service
+load-on-startup = 2
+[init-params]
+org.restlet.application = ca.nrc.cadc.uws.web.restlet.UWSAsyncApplication
+ca.nrc.cadc.uws.server.JobManager = dalserver.tap.TapJobManager
+[servlet-mapping]
+servlet-name = AsyncServlet
+url-pattern = /tap-demo/async/*
+
+[servlet]
+
+# TAP has its own servlet TapCapabilitiesServlet that includes support for
+# the TAPRegExt content.  For the moment we use the generic capabilities
+# servlet that describes the service capabilities except for TAPRegExt.
+
+servlet-name = CapServlet
+servlet-class = ca.nrc.cadc.vosi.CapabilitiesServlet
+description = VOSI-defined capabilities of this service
+[init-params]
+/ = ivo://ivoa.net/std/TAP std
+/capabilities = ivo://ivoa.net/std/VOSI#capabilities
+/availability = ivo://ivoa.net/std/VOSI#availability
+/tables = ivo://ivoa.net/std/VOSI#tables
+[servlet-mapping]
+servlet-name = CapServlet
+url-pattern = /tap-demo/capabilities
+
+[servlet]
+
+servlet-name = AvailabilityServlet
+servlet-class = ca.nrc.cadc.vosi.AvailabilityServlet
+description = Standard resource used to query current service status
+load-on-startup = 3
+[init-params]
+ca.nrc.cadc.vosi.WebService = dalserver.tap.TapWebService
+[servlet-mapping]
+servlet-name = AvailabilityServlet
+url-pattern = /tap-demo/availability
+
+[servlet]
+
+servlet-name = TableServlet
+servlet-class = ca.nrc.cadc.vosi.TableServlet
+description = Standard resource used to query current service status
+load-on-startup = 3
+[init-params]
+[servlet-mapping]
+servlet-name = TableServlet
+url-pattern = /tap-demo/tables
+

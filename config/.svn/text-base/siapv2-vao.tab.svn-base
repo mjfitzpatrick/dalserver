@@ -1,0 +1,93 @@
+# SIA Image table configuration
+
+[table]
+
+# VAO SIAV2 Prototype Image Service
+# This V1 prototype (fall 2013) uses an early version of the Image table.
+# --------------------------------------------------------------------------- 
+
+table-name = siav2model
+table-class = image.vao.nov2013
+description = 
+    Interim image table used for the fall 2013 VAO SIAV2 prototype.
+
+
+[standard]
+
+# Usage of standard fields of the DALServer-defined standard Image table.
+# By default all standard fields are returned, with null values if no value.
+# --------------------------------------------------------------------------- 
+
+# Map ImageDM fields to the older VAO prototype Image table.
+obs_id			col=obsid
+access_format		col=format
+access_estsize		col=estsize
+calib_level		col=datasetcaliblevel
+dataset_length		col=datalength
+
+im_nsubarrays		col=nsubarrays
+im_naxes		col=naxes
+im_naxis
+im_pixtype		col=pixtype
+im_wcsaxes
+#im_scale		col=pixelresoution1  # wrong units...
+
+obs_title		col=title
+obs_creator_name	col=creator
+obs_collection		col=collection
+obs_publisher_did	col=publisherdid
+
+s_ra			col=spatiallocation1
+s_dec			col=spatiallocation2
+s_lo_ra			col=spatiallolimit1
+s_lo_dec		col=spatiallolimit2
+s_hi_ra			col=spatialhilimit1
+s_hi_dec		col=spatialhilimit2
+s_resolution		col=spatialresolution1
+em_bandpass		col=spectrallocation
+em_min			col=spectralstart
+em_max			col=spectralstop
+em_resolution		col=spectralresolution
+em_res_power		col=spectralrespower
+t_min			col=timestart
+t_max			col=timestop
+o_ucd			col=fluxaxisucd
+o_unit			col=fluxaxisunit
+pol_states		col=polaxisenum
+
+# Omit the following standard fields.
+obs_creator_did		omit
+obs_dataset_did		omit
+
+# Some common extension metadata not included in the core Image table:
+# Just uncomment a field if it is provided.
+
+# obs_logo
+# contact_email
+# target_desc
+# target_redshift
+# s_resolution_min
+# s_resolution_max
+# em_bandpass
+# t_midpoint
+
+# Add some fields already present; another test
+#obs_id
+#archive_id
+
+
+[custom]
+
+# Any provider-defined custom fields should be defined here.
+# Any VOTable attributes may be given; the VOTable field NAME attribute defaults
+# to the image table column name (at the left); DATATYPE defaults to char,
+# otherwise a value must be given.  All other attributes (UCD, UTYPE, UNIT, 
+# etc.) are optional.
+#
+# The VLA FIRST Image table does include a few custom fields, only two of
+# which we list here for pass-through.  The other fields are used internally.
+# ---------------------------------------------------------------------------
+
+#project_code		# Use all default attributes
+#file_set_id  		name=fileset_id datatype=char ucd=meta.id
+

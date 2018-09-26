@@ -1,0 +1,85 @@
+VAO SIAV2 Prototype
+-----------------------
+
+This directory contains files related to the VAO prototype demonstration
+of an SIAv2 service.  See the following URLs for details:
+
+  IVOA: http://wiki.ivoa.net/twiki/bin/view/IVOA/SIA2VAOPrototype
+  VAO:  http://wiki.usvao.org/twiki/bin/view/Main/DataCubes
+
+
+BUILDING AND DEPLOYING THE PROTOTYPE
+====================================
+
+Installation involves the following:
+
+    - Load metadata for the test data collection into MySQL.
+    - Configure the servlet.
+    - Build and deploy the servlet.
+
+
+Loading Metadata
+
+    To load the metadata for the VAO Prototype into a MySQL DBMS, you
+    must have MySQL 5.1 or later installed in your system and the mysql
+    command in your path.  The username that you will use for writing to
+    the database must be already be defined.  Assuming this, you can
+    type (from the dalserver distribution base directory):
+
+       prototype/loaddb.sh username password
+
+    where username is the MySQL username and password is the user's
+    MySQL password.
+
+    Alternatively, you may edit the USERNAME and PASSWORD parameters at
+    the top of the script; then these need not be given on the command
+    line:
+
+       prototype/loaddb.sh
+
+    The database can also be loaded via Ant in the base directory of the
+    dalserver package:
+
+       ant -Ddb.user=username -Ddb.pass=pw loaddb
+
+    where username and pw are the database username and password
+    respectively.  If the -D arguments are not given, they will default
+    to the default values hardcoded in the loaddb.sh script.
+
+Configure Servlet
+
+    To configure the servlet for the local installation all one need do
+    is edit web/WEB-INF/web.xml.  Either confirm or edit the following
+    entries for the service titled "SIAPV2 (...) Prototype Servlet":
+
+	authorityID	Should be changed for a real service, but may
+			be left as is for testing.
+
+	dataDirURL	Must point to the root directory of the data
+			storage area.
+
+	dbUser		Must be a valid MySQL user (either edit, or
+			create the named user).
+
+	dbPassword	Edit as necessary for the dbUser account.
+
+    The other parameters should not need to be changed.
+
+Build and Deploy
+
+    Note, service configuration (above) should be done before deploying
+    the service, unless one plans to edit the web.xml in the already
+    deployed service.  Deploying the servlet will replace any existing
+    web.xml file, along with all other servlet files.
+
+    To build the service merely type "ant dist" in the dalserver root
+    directory.  This builds a file dist/ivoa-dal.war.   Either place a
+    copy of this file in your Tomcat webapps directory (it will
+    automatically be deployed), or use the Tomcat adminstrative Web
+    interface to deploy the servlet.
+
+    The link http://localhost:8080/ivoa-dal/siav2query.html should
+    display the SIAV2 Web query form.  The link
+    http://localhost:8080/ivoa-dal will display all available configured
+    DALServer test/demo services.  http://localhost:8080 is the Tomcat
+    adminstrative console.

@@ -1,0 +1,17 @@
+#!/bin/csh -x
+
+set l = "/home/datalab/dalserver.21/lib/"
+#javac -cp .:/home/datalab/dalserver.21/lib/kxml2-2.3.0.jar */*.java
+
+
+set cp = "/usr/share/java/tomcat-servlet-3.0-api.jar"
+foreach i ($HOME/dalserver.21/lib/*.jar)
+    set cp = ${cp}":"${i}
+end
+
+javac -cp .:${cp} `find . -name \*.java`
+
+jar cvf ~/dalserver.21/lib/cadcTAP.jar `find . -name \*.class`
+(chdir resources ; jar uvf ~/dalserver.21/lib/cadcTAP.jar *)
+
+exit

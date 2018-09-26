@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+  
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>dalserver-install.html</title></head><body>
+<h1 style="color: black;">DALServer Installation Overview<br>
+</h1><p>The DALServer framework contains everything required to expose
+astronomical data (astronomical catalogs, image or spectral data
+collections with associated metadata, or spectral line lists) via the
+standard VO
+protocols.&nbsp; Installation is straightforward: deploy the prebuilt
+Java Web application and configure your local data services, computing
+standard VO metadata for a data collection where required.&nbsp; A
+single installation can support any number of data services, each
+associated with a specific catalog or logical data collection.&nbsp; No
+software development is required, although extension of the framework
+is possible to provide more advanced functionality.<br>
+</p>
+
+
+
+<h2>Prerequisites</h2>
+A host machine with a Java applications server or servlet container
+already installed is assumed, as well as a database management system
+(DBMS) to contain astronomical catalogs to be exposed, or metadata tables describing
+the data collections to be
+published.&nbsp; For our examples here we assume that the applications
+server is Apache Tomcat, installed on the local host in the default
+configuration.&nbsp; Other
+application servers or configurations are possible but are not
+described here.<br>
+
+<h2>Installation</h2>
+
+
+The precompiled DALServer Web-app is installed as follows:<br>
+
+<ul>
+
+  <li>Download the <a href="http://vaosa-vm1.aoc.nrao.edu/vo/dalserver/dalserver.tgz">DALServer installation
+tarball</a> from this page.</li>
+  <li>Unpack the tarball (unpacking to <span style="font-family: monospace;">/opt/services/dalserver</span> will
+simplify the installation).</li>
+  <li>Deploy the prebuilt DALServer Web-app <span style="font-family: monospace;">ivoa-dal.war</span> to the
+applications server (e.g., Tomcat).</li>
+  <li>Wait a few seconds, then bring up <a href="http://localhost:8080/ivoa-dal">http://localhost:8080/ivoa-dal </a>in
+a Web browser (a different URL may be required depending upon how the applications server was installed).</li>
+</ul>The browser should then display the DALServer administration
+console.&nbsp; At this point this is just a static Web page providing
+query interfaces for the service instances that are built into
+DALServer.&nbsp; These should be exercised to verify that installation
+was successful and the service code is functioning correctly.&nbsp; The
+services currently provided as built-ins are a cone search service for
+an integrated copy of the Messier catalog, and null query (metadata
+only) services for SIA and SSA.&nbsp; Although the data provided built into the framework is
+minimal, these are real services that
+exercise the same configuration mechanism and generic service code that
+will be used later for actual local data services.<br>
+
+<h2>Configuration</h2>
+
+
+<p>Service configuration is performed by preparing one or two service
+configuration text files per service, typically by copying and
+modifying an
+existing configuration or a template file, and then reloading the
+modified configuration.&nbsp; The <a href="dalserver-config.html">Service Configuration</a> page provides detailed instructions for service configuration, but we summarize the overall procedure here.<br>
+</p>
+
+<p>
+Local configuration data is stored externally to the DALServer Webapp (<span style="font-family: monospace;">ivoa-dal.war</span>)
+to ensure that it is not lost when a new version of the Webapp is
+installed. By default local configuration data is stored in the
+directory "<span style="font-family: monospace;">/opt/services/dalserver</span>"
+on the server running the Java application server (refer to the
+detailed documentation if you need to use a
+different directory). If you unpacked the DALServer tarball into this
+directory earlier, you will already have sample and template
+configuration files available in this directory, ready to be used to
+configure new services.</p>
+
+<p>
+Every service instance requires a service (servlet) configuration "<span style="font-family: monospace;">.conf</span>" file. Each service may
+optionally have a table configuration ("<span style="font-family: monospace;">.tab</span>")
+file as well, used to customize the metadata to be returned by the
+service as well as the interface to the DBMS table used to drive the
+service.
+A global "<span style="font-family: monospace;">server.conf</span>"
+file defines the global DALServer configuration and points to the
+locally added data services.</p>
+
+<p>
+An example of a local service configuration directory follows:</p>
+
+<div style="background-color: rgb(255, 255, 204);">
+<pre>    README               server.conf             siapv2-vlafirst.conf<br>    reload.conf          siap-null.conf          siapv2-vlafirst.tab<br>    scs-messier.conf     siapv1-vlafirst.conf    slap-null.conf<br>    scs-vlafirst.conf    siapv1-vlafirst.tab     ssap-null.conf<br>    scsVaoImage.conf     siapv2-vao.conf<br>    scsVaoImage.tab      siapv2-vao.tab<br></pre>
+</div>
+
+<p>
+For example, if we wanted to configure a new cone search service for
+the Abell
+catalog, we would add a new service configuration file, e.g., "<span style="font-family: monospace;">scs-abell.conf</span>", optionally a
+table configuration file as well ("<span style="font-family: monospace;">scs-abell.tab</span>"),
+and add a line to server.conf telling it to create a service instance
+for the new cone search service. </p>
+
+<p>
+Once the service configuration has been edited, the DALServer "reload"
+resource is used to reload the local configuration, affecting all
+service
+instances).&nbsp; A reload should be performed whenever the
+configuration changes or
+whenever a new version of the DALServer Webapp is installed.&nbsp;<span style="font-style: italic;"></span></p>
+
+<p>For example, to execute a reload for an application server running
+on port 8080 on the localhost, visit the following URL:<br>
+</p>
+
+<div style="margin-left: 40px;"><a href="http://localhost:8080/ivoa-dal/reload">
+http://localhost:8080/ivoa-dal/reload</a></div>
+
+<p>Note the application server must have read permission on the
+configuration directory for this to work.&nbsp; If
+"reload" executes successfully it prints a summary of the new service
+configuration, e.g.: </p>
+
+<div style="background-color: rgb(255, 255, 204);">
+<pre>    WebApp: DALServer Framework Test Configuration<br><br>    reload		0 parameters<br>    scs-messier		12 parameters<br>    siap-null		3 parameters<br>    ssap-null		3 parameters<br>    scsVaoImage		14 parameters tableconfig<br>    scs-vlafirst	13 parameters<br>    siapv2-vlafirst	18 parameters tableconfig<br>    siapv1-vlafirst	18 parameters tableconfig<br>    siapv2-vao		20 parameters tableconfig<br><br>    Successfully created 9 servlets<br>    2014/08/21 15:12:16<br></pre>
+</div>
+
+<p>After a reload it is advisable to wait a few seconds for the
+application server to reload the modified configuration.&nbsp; A simple
+password protection mechanism is available to protect against
+unauthorized configuration reloads, which should be enabled in a
+production system.<br>
+</p>
+
+
+
+<h2>Advanced Usage</h2>Java programming is not required to use
+DALServer, but may be needed to customize the functionality for
+advanced services.&nbsp; DALServer is a Java Webapp; it is
+self-contained and uses Ant as the
+build tool.&nbsp; The details of how DALServer works internally and can
+be extended are beyond the scope of what we can cover here, however the
+<a href="http://localhost:8080/ivoa-dal/javadoc/">DALServer Javadoc</a>
+built into every running DALServer instance describes the DALServer
+classes.<br>
+
+<br>
+
+</body></html>

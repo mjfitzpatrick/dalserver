@@ -1,0 +1,30 @@
+DALServer Library Files
+------------------------
+
+build.properties
+	Configuration variables for the Ant build script.
+
+cds.jar
+	Jar of compiled CDS Savot VOTable classes.
+
+setup.csh
+	Sample environment setup file.  Basically, the only external dependencies
+	are Java 1.5 or greater, Ant, an application server (e.g., Apache Tomcat)
+	which will include the Java servlet classes, and an XML parser such as
+	Xerces.  The file catalina_ant.jar must be installed in Tomcat for the
+	Ant integration to work.
+
+ssap-table.txt
+	Template code for adding SSAP keywords to a RequestResponse object (e.g.,
+	for implementing the queryData operation).
+
+spectrum-table.txt
+	Template code for adding Spectrum DM keywords to a RequestResponse object
+	(e.g., for implementing the getData operation to return data model-based
+	datasets constructed on the fly).
+
+ssap-keywords.csv
+	A CSV version of the SSAP/Spectrum data models.  When the data model
+	changes, the command "java dalserver.SsapKeywordFactory" is run to rebuild
+	the DALServer SSAP and Spectrum keyword factories.  See the "main" at
+	the end of the above source file for additional related utilities.

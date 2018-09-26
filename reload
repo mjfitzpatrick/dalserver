@@ -1,0 +1,3 @@
+#!/bin/sh
+
+wget -O - http://dldb1.sdm.noao.edu:8080/ivoa-dal/reload

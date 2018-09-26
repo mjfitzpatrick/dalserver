@@ -1,0 +1,153 @@
+// Query Metadata
+r.addGroup(ssap.newGroup("Query"));
+r.addField(ssap.newField("Score"));
+r.addParam(ssap.newParam("Token", "UNSET"));
+
+// Association Metadata
+r.addGroup(ssap.newGroup("Association"));
+r.addParam(ssap.newParam("AssocType", "UNSET"));
+r.addField(ssap.newField("AssocID"));
+r.addField(ssap.newField("AssocKey"));
+
+// Access Metadata
+r.addGroup(ssap.newGroup("Access"));
+r.addField(ssap.newField("AcRef"));
+r.addField(ssap.newField("Format"));
+r.addField(ssap.newField("DatasetSize"));
+
+// General Dataset Metadata
+r.addGroup(ssap.newGroup("Dataset"));
+r.addParam(ssap.newParam("DataModel", "Spectrum-1.0"));
+r.addParam(ssap.newParam("DatasetType", "Spectrum"));
+r.addField(ssap.newField("DataLength"));
+r.addField(ssap.newField("TimeSI"));
+r.addField(ssap.newField("SpectralSI"));
+r.addField(ssap.newField("FluxSI"));
+r.addField(ssap.newField("SpectralAxis"));
+r.addField(ssap.newField("FluxAxis"));
+
+// Dataset Identification Metadata
+r.addGroup(ssap.newGroup("DataID"));
+r.addField(ssap.newField("Title"));
+r.addField(ssap.newField("Creator"));
+r.addField(ssap.newField("Collection"));
+r.addField(ssap.newField("DatasetID"));
+r.addField(ssap.newField("CreatorDID"));
+r.addField(ssap.newField("CreatorDate"));
+r.addField(ssap.newField("CreatorVersion"));
+r.addField(ssap.newField("Instrument"));
+r.addField(ssap.newField("Bandpass"));
+r.addField(ssap.newField("DataSource"));
+r.addField(ssap.newField("CreationType"));
+r.addField(ssap.newField("CreatorLogo"));
+r.addField(ssap.newField("Contributor"));
+
+// Curation Metadata
+r.addGroup(ssap.newGroup("Curation"));
+r.addField(ssap.newField("Publisher"));
+r.addField(ssap.newField("PublisherID"));
+r.addField(ssap.newField("PublisherDID"));
+r.addField(ssap.newField("PublisherDate"));
+r.addField(ssap.newField("PublisherVersion"));
+r.addField(ssap.newField("Rights"));
+r.addField(ssap.newField("Reference"));
+r.addField(ssap.newField("ContactName"));
+r.addField(ssap.newField("ContactEmail"));
+
+// Target Metadata
+r.addGroup(ssap.newGroup("Target"));
+r.addField(ssap.newField("TargetDescription"));
+r.addField(ssap.newField("TargetName"));
+r.addField(ssap.newField("TargetClass"));
+r.addField(ssap.newField("TargetPos"));
+r.addField(ssap.newField("SpectralClass"));
+r.addField(ssap.newField("Redshift"));
+r.addField(ssap.newField("VarAmpl"));
+
+// Derived Metadata
+r.addGroup(ssap.newGroup("Derived"));
+r.addField(ssap.newField("DerivedSNR"));
+r.addField(ssap.newField("DerivedVarAmpl"));
+r.addField(ssap.newField("DerivedRedshift"));
+r.addField(ssap.newField("RedshiftStatError"));
+r.addField(ssap.newField("RedshiftConfidence"));
+
+// Coordinate System Metadata
+r.addGroup(ssap.newGroup("CoordSys"));
+r.addParam(ssap.newParam("SpaceFrameName", "UNSET"));
+r.addParam(ssap.newParam("SpaceFrameUcd", "UNSET"));
+r.addParam(ssap.newParam("SpaceFrameRefPos", "UNSET"));
+r.addParam(ssap.newParam("SpaceFrameEquinox", "UNSET"));
+r.addParam(ssap.newParam("TimeFrameName", "UNSET"));
+r.addParam(ssap.newParam("TimeFrameUcd", "UNSET"));
+r.addParam(ssap.newParam("TimeFrameZero", "UNSET"));
+r.addParam(ssap.newParam("TimeFrameRefPos", "UNSET"));
+r.addParam(ssap.newParam("SpectralFrameName", "UNSET"));
+r.addParam(ssap.newParam("SpectralFrameUcd", "UNSET"));
+r.addParam(ssap.newParam("SpectralFrameRefPos", "UNSET"));
+r.addParam(ssap.newParam("SpectralFrameRedshift", "UNSET"));
+r.addParam(ssap.newParam("RedshiftFrameName", "UNSET"));
+r.addParam(ssap.newParam("RedshiftFrameRefPos", "UNSET"));
+r.addParam(ssap.newParam("DopplerDefinition", "UNSET"));
+
+// Spatial Axis Characterization
+r.addGroup(ssap.newGroup("Char.SpatialAxis"));
+r.addField(ssap.newField("SpatialAxisName"));
+r.addField(ssap.newField("SpatialAxisUcd"));
+r.addField(ssap.newField("SpatialAxisUnit"));
+r.addField(ssap.newField("SpatialLocation"));
+r.addField(ssap.newField("SpatialExtent"));
+r.addField(ssap.newField("SpatialArea"));
+r.addField(ssap.newField("SpatialSupportExtent"));
+r.addField(ssap.newField("SpatialSampleExtent"));
+r.addField(ssap.newField("SpatialFillFactor"));
+r.addField(ssap.newField("SpatialStatError"));
+r.addField(ssap.newField("SpatialSysError"));
+r.addField(ssap.newField("SpatialCalibration"));
+r.addField(ssap.newField("SpatialResolution"));
+
+// Spectral Axis Characterization
+r.addGroup(ssap.newGroup("Char.SpectralAxis"));
+r.addField(ssap.newField("SpectralAxisName"));
+r.addField(ssap.newField("SpectralAxisUcd"));
+r.addField(ssap.newField("SpectralAxisUnit"));
+r.addField(ssap.newField("SpectralLocation"));
+r.addField(ssap.newField("SpectralExtent"));
+r.addField(ssap.newField("SpectralStart"));
+r.addField(ssap.newField("SpectralStop"));
+r.addField(ssap.newField("SpectralSupportExtent"));
+r.addField(ssap.newField("SpectralSampleExtent"));
+r.addField(ssap.newField("SpectralFillFactor"));
+r.addField(ssap.newField("SpectralBinSize"));
+r.addField(ssap.newField("SpectralStatError"));
+r.addField(ssap.newField("SpectralSysError"));
+r.addField(ssap.newField("SpectralCalibration"));
+r.addField(ssap.newField("SpectralResolution"));
+r.addField(ssap.newField("SpectralResPower"));
+
+// Time Axis Characterization
+r.addGroup(ssap.newGroup("Char.TimeAxis"));
+r.addField(ssap.newField("TimeAxisName"));
+r.addField(ssap.newField("TimeAxisUcd"));
+r.addField(ssap.newField("TimeAxisUnit"));
+r.addField(ssap.newField("TimeLocation"));
+r.addField(ssap.newField("TimeExtent"));
+r.addField(ssap.newField("TimeStart"));
+r.addField(ssap.newField("TimeStop"));
+r.addField(ssap.newField("TimeSupportExtent"));
+r.addField(ssap.newField("TimeSampleExtent"));
+r.addField(ssap.newField("TimeFillFactor"));
+r.addField(ssap.newField("TimeBinSize"));
+r.addField(ssap.newField("TimeStatError"));
+r.addField(ssap.newField("TimeSysError"));
+r.addField(ssap.newField("TimeCalibration"));
+r.addField(ssap.newField("TimeResolution"));
+
+// Flux Axis Characterization
+r.addGroup(ssap.newGroup("Char.FluxAxis"));
+r.addField(ssap.newField("FluxAxisName"));
+r.addField(ssap.newField("FluxAxisUcd"));
+r.addField(ssap.newField("FluxAxisUnit"));
+r.addField(ssap.newField("FluxStatError"));
+r.addField(ssap.newField("FluxSysError"));
+r.addField(ssap.newField("FluxCalibration"));

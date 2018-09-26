@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE project>
+
+<project default="build" basedir=".">
+
+  <!-- JavaScript minification. -->
+  <property name="lib.compressor" value="${ext.dev}/yuicompressor.jar" />
+
+</project>

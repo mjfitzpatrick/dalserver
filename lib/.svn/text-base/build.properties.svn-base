@@ -1,0 +1,10 @@
+# Context path to install this application on
+app.path=/ivoa-dal
+
+# Tomcat 5 installation directory
+catalina.home=${env.CATALINA_HOME}
+
+# Manager webapp username and password (customize as needed)
+manager.username=nvoss
+manager.password=tomcat
+

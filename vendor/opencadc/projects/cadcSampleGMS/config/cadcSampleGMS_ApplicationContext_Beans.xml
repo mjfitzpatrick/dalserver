@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+  <bean id="propertyPlaceholder"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="searchSystemEnvironment" value="true"/>
+  </bean>
+
+  <!-- Persistenct beans. -->
+  <bean id="userPersistence" name="userPersistence"
+        class="ca.nrc.cadc.gms.server.persistence.MemoryUserPersistence" />
+
+  <bean id="groupPersistence" name="groupPersistence"
+        class="ca.nrc.cadc.gms.server.persistence.MemoryGroupPersistence" />  
+
+
+  <!-- Service Beans. -->
+  <bean id="userService" name="userService"
+        class="ca.nrc.cadc.gms.server.UserServiceImpl">
+    <property name="userPersistence" ref="userPersistence" />
+    <property name="groupPersistence" ref="groupPersistence" />
+  </bean>
+
+  <bean id="groupService" name="groupService"
+        class="ca.nrc.cadc.gms.server.GroupServiceImpl">
+    <property name="groupPersistence" ref="groupPersistence" />
+    <property name="groupUriPrefix" value="ivo://cadc.nrc.ca/gms/group#"/>
+  </bean>
+
+  <!-- Web Beans -->
+
+  <!-- Main router -->
+  <bean name="router" class="org.restlet.ext.spring.SpringBeanRouter" />
+
+
+  <!--
+    ** Security Filter **
+    This can be overridden if no Security is wanted.  This default
+    implementation will simply create a Subject, and issue a Subject.doAs with
+    a the newly created Subject, thus placing it in the current thread.  If
+    this is not desired, then simply replace it with something that does
+    nothing, or replace the "inboundRoot" property of the Application bean's
+    value with ref="router" instead of ref="securityFilter".
+
+    To perform the authorization, it is recommended that you implement your
+    own Service Beans, and protect those methods.
+  -->
+  <bean name="securityInjector"
+        class="ca.nrc.cadc.gms.security.BasicSubjectInjectorImpl">
+    <property name="next" ref="router" />
+  </bean>
+
+  <!-- The Restlet Component -->
+  <bean id="component" name="component"
+        class="org.restlet.ext.spring.SpringComponent">
+    <property name="defaultTarget" ref="application" />
+    <property name="context" ref="component.context" />
+    <property name="clientsList">
+      <list>
+        <value>http</value>
+        <value>file</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean name="component.context"
+        class="org.springframework.beans.factory.config.PropertyPathFactoryBean" />
+
+  <!-- The Restlet Application -->
+  <bean id="application" name="application" class="org.restlet.Application">
+    <property name="inboundRoot" ref="securityInjector" />
+    <property name="tunnelService">
+      <bean class="org.restlet.service.TunnelService">
+        <constructor-arg value="true" />
+        <constructor-arg value="false" />
+        <constructor-arg value="true" />
+      </bean>
+    </property>
+    <property name="metadataService" ref="metadataService" />
+    <property name="connectorService">
+      <bean class="org.restlet.service.ConnectorService">
+        <property name="enabled" value="true" />
+        <property name="clientProtocols">
+          <list>
+            <bean class="org.restlet.data.Protocol"
+                  factory-method="valueOf">
+              <constructor-arg value="WAR" />
+            </bean>
+            <bean class="org.restlet.data.Protocol"
+                  factory-method="valueOf">
+              <constructor-arg value="FILE" />
+            </bean>
+            <bean class="org.restlet.data.Protocol"
+                  factory-method="valueOf">
+              <constructor-arg value="HTTP" />
+            </bean>
+          </list>
+        </property>
+      </bean>
+    </property>
+  </bean>
+
+  <!-- Metadata Service -->
+  <bean name="metadataService"
+        class="ca.nrc.cadc.gms.server.web.CADCGMSMetadataService" />
+
+  <!-- Resources -->
+  <bean abstract="true" name="baseResource" scope="prototype"
+        class="ca.nrc.cadc.gms.server.web.restlet.AbstractResource" />
+
+  <bean name="/groups" id="groupListResource" scope="prototype"
+        parent="baseResource"
+        class="ca.nrc.cadc.gms.server.web.restlet.GroupListResource" >
+    <property name="groupService" ref="groupService" />
+  </bean>
+
+  <bean name="/groups/{groupID}" id="groupResource" scope="prototype"
+        parent="baseResource"
+        class="ca.nrc.cadc.gms.server.web.restlet.GroupResource">
+    <property name="groupService" ref="groupService" />
+  </bean>
+
+  <bean name="/groups/{groupID}/members" id="groupMemberListResource" scope="prototype"
+        parent="baseResource"
+        class="ca.nrc.cadc.gms.server.web.restlet.GroupMemberListResource" />
+
+  <bean name="/groups/{groupID}/properties" id="groupPropertiesResource" scope="prototype"
+        parent="baseResource"
+        class="ca.nrc.cadc.gms.server.web.restlet.GroupPropertiesResource" />
+
+  <bean name="/groups/{groupID}/{memberID}" id="groupMemberResource" scope="prototype"
+        parent="baseResource"
+        class="ca.nrc.cadc.gms.server.web.restlet.GroupMemberResource">
+    <property name="userService" ref="userService" />
+    <property name="groupService" ref="groupService" />
+  </bean>
+
+  <bean name="/members/{memberID}" id="memberResource" scope="prototype"
+        parent="baseResource"
+        class="ca.nrc.cadc.gms.server.web.restlet.MemberResource">
+    <property name="userService" ref="userService" />
+  </bean>
+
+  <bean name="/members/{memberID}/{groupID}" id="memberGroupResource" scope="prototype"
+        parent="baseResource"
+        class="ca.nrc.cadc.gms.server.web.restlet.GroupMemberResource">
+    <property name="userService" ref="userService" />
+    <property name="groupService" ref="groupService" />
+  </bean>
+  
+</beans>

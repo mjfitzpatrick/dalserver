@@ -1,0 +1,58 @@
+<HTML><HEAD>
+<TITLE>SSA Data Element Keywords</TITLE>
+</HEAD><BODY>
+<TABLE width=950 align=center>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><B>SSA Data Element Keywords</B></TD></TR>
+<TR><TD align=left><I>ID</I></TD><TD align=left><I>UTYPE</I></TD><TD align=left><I>DataType</I></TD><TD align=left><I>Unit</I></TD><TD align=left><I>Description</I></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Spectral Axis Data</I></TD></TR>
+<TR><TD>Data.SpectralAxis</TD><TD>Data.SpectralAxis</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Spectral Axis Data</TD></TR>
+<TR><TD>data_em_value</TD><TD>Data.SpectralAxis.Value</TD><TD align="center">double</TD><TD align="left"></TD><TD>Spectral coordinates for points</TD></TR>
+<TR><TD>data_em_ucd</TD><TD>Data.SpectralAxis.Ucd</TD><TD align="center">char</TD><TD align="left"></TD><TD>UCD for spectral coord</TD></TR>
+<TR><TD>data_em_unit</TD><TD>Data.SpectralAxis.Unit</TD><TD align="center">char</TD><TD align="left"></TD><TD>Unit for spectral coord</TD></TR>
+<TR><TD>data_em_binsize</TD><TD>Data.SpectralAxis.Accuracy.BinSize</TD><TD align="center">double</TD><TD align="left"></TD><TD>Spectral coord bin size</TD></TR>
+<TR><TD>data_em_binlow</TD><TD>Data.SpectralAxis.Accuracy.BinLow</TD><TD align="center">double</TD><TD align="left"></TD><TD>Spectral coord bin lower end</TD></TR>
+<TR><TD>data_em_binhigh</TD><TD>Data.SpectralAxis.Accuracy.BinHigh</TD><TD align="center">double</TD><TD align="left"></TD><TD>Spectral coord bin upper end</TD></TR>
+<TR><TD>data_em_stat_error</TD><TD>Data.SpectralAxis.Accuracy.StatError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Spectral coord measurement error</TD></TR>
+<TR><TD>data_em_stat_errlow</TD><TD>Data.SpectralAxis.Accuracy.StatErrLow</TD><TD align="center">double</TD><TD align="left"></TD><TD>Spectral coord measurement lower error</TD></TR>
+<TR><TD>data_em_stat_errhigh</TD><TD>Data.SpectralAxis.Accuracy.StatErrHigh</TD><TD align="center">double</TD><TD align="left"></TD><TD>Spectral coord measurement upper error</TD></TR>
+<TR><TD>data_em_sys_error</TD><TD>Data.SpectralAxis.Accuracy.SysError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Spectral coord systematic error</TD></TR>
+<TR><TD>data_em_resolution</TD><TD>Data.SpectralAxis.Resolution</TD><TD align="center">double</TD><TD align="left"></TD><TD>Spectral resolution FWHM</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Flux Axis Data</I></TD></TR>
+<TR><TD>Data.FluxAxis</TD><TD>Data.FluxAxis</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Flux Axis Data</TD></TR>
+<TR><TD>data_o_value</TD><TD>Data.FluxAxis.Value</TD><TD align="center">double</TD><TD align="left"></TD><TD>Flux values for points</TD></TR>
+<TR><TD>data_o_ucd</TD><TD>Data.FluxAxis.Ucd</TD><TD align="center">char</TD><TD align="left"></TD><TD>UCD for flux</TD></TR>
+<TR><TD>data_o_unit</TD><TD>Data.FluxAxis.Unit</TD><TD align="center">char</TD><TD align="left"></TD><TD>Unit for flux</TD></TR>
+<TR><TD>data_o_stat_error</TD><TD>Data.FluxAxis.Accuracy.StatError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Flux symmetric statistical error</TD></TR>
+<TR><TD>data_o_stat_errlow</TD><TD>Data.FluxAxis.Accuracy.StatErrLow</TD><TD align="center">double</TD><TD align="left"></TD><TD>Flux lower error</TD></TR>
+<TR><TD>data_o_stat_errhigh</TD><TD>Data.FluxAxis.Accuracy.StatErrHigh</TD><TD align="center">double</TD><TD align="left"></TD><TD>Flux upper error</TD></TR>
+<TR><TD>data_o_sys_error</TD><TD>Data.FluxAxis.Accuracy.SysError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Flux systematic error</TD></TR>
+<TR><TD>data_o_quality</TD><TD>Data.FluxAxis.Quality</TD><TD align="center">long</TD><TD align="left"></TD><TD>Flux measurement quality mask</TD></TR>
+<TR><TD>data_o_quality_desc</TD><TD>Data.FluxAxis.Quality.n</TD><TD align="center">char</TD><TD align="left"></TD><TD>Meaning of quality value</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Time Axis Data</I></TD></TR>
+<TR><TD>Data.TimeAxis</TD><TD>Data.TimeAxis</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Time Axis Data</TD></TR>
+<TR><TD>data_t_value</TD><TD>Data.TimeAxis.Value</TD><TD align="center">double</TD><TD align="left"></TD><TD>Time coordinates for points</TD></TR>
+<TR><TD>data_t_ucd</TD><TD>Data.TimeAxis.Ucd</TD><TD align="center">char</TD><TD align="left"></TD><TD>UCD for time</TD></TR>
+<TR><TD>data_t_unit</TD><TD>Data.TimeAxis.Unit</TD><TD align="center">char</TD><TD align="left"></TD><TD>Unit for time</TD></TR>
+<TR><TD>data_t_binsize</TD><TD>Data.TimeAxis.Accuracy.BinSize</TD><TD align="center">double</TD><TD align="left"></TD><TD>Time bin size</TD></TR>
+<TR><TD>data_t_binlow</TD><TD>Data.TimeAxis.Accuracy.BinLow</TD><TD align="center">double</TD><TD align="left"></TD><TD>Time bin start</TD></TR>
+<TR><TD>data_t_binhigh</TD><TD>Data.TimeAxis.Accuracy.BinHigh</TD><TD align="center">double</TD><TD align="left"></TD><TD>Time bin stop</TD></TR>
+<TR><TD>data_t_stat_error</TD><TD>Data.TimeAxis.Accuracy.StatError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Time coord measurement statistical error</TD></TR>
+<TR><TD>data_t_stat_errlow</TD><TD>Data.TimeAxis.Accuracy.StatErrLow</TD><TD align="center">double</TD><TD align="left"></TD><TD>Time coord measurement lower error</TD></TR>
+<TR><TD>data_t_stat_errhigh</TD><TD>Data.TimeAxis.Accuracy.StatErrHigh</TD><TD align="center">double</TD><TD align="left"></TD><TD>Time coord measurement upper error</TD></TR>
+<TR><TD>data_t_sys_error</TD><TD>Data.TimeAxis.Accuracy.SysError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Time coord measurement systematic error</TD></TR>
+<TR><TD>data_t_resolution</TD><TD>Data.TimeAxis.Resolution</TD><TD align="center">double</TD><TD align="left"></TD><TD>Temporal resolution FWHM</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Background Model Data</I></TD></TR>
+<TR><TD>Data.BackgroundModel</TD><TD>Data.BackgroundModel</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Background Model Data</TD></TR>
+<TR><TD>data_b_value</TD><TD>Data.BackgroundModel.Value</TD><TD align="center">double</TD><TD align="left"></TD><TD>Flux values for points</TD></TR>
+<TR><TD>data_b_ucd</TD><TD>Data.BackgroundModel.Ucd</TD><TD align="center">char</TD><TD align="left"></TD><TD>UCD for background flux</TD></TR>
+<TR><TD>data_b_unit</TD><TD>Data.BackgroundModel.Unit</TD><TD align="center">char</TD><TD align="left"></TD><TD>Unit for background flux</TD></TR>
+<TR><TD>data_b_stat_error</TD><TD>Data.BackgroundModel.Accuracy.StatError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Background model symmetric error</TD></TR>
+<TR><TD>data_b_stat_errlow</TD><TD>Data.BackgroundModel.Accuracy.StatErrLow</TD><TD align="center">double</TD><TD align="left"></TD><TD>Background model lower error</TD></TR>
+<TR><TD>data_b_stat_errhigh</TD><TD>Data.BackgroundModel.Accuracy.StatErrHigh</TD><TD align="center">double</TD><TD align="left"></TD><TD>Background model upper error</TD></TR>
+<TR><TD>data_b_sys_error</TD><TD>Data.BackgroundModel.Accuracy.SysError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Background model systematic error</TD></TR>
+<TR><TD>data_b_quality</TD><TD>Data.BackgroundModel.Quality</TD><TD align="center">long</TD><TD align="left"></TD><TD>Background model quality mask</TD></TR>
+</TABLE>
+</BODY></HTML>

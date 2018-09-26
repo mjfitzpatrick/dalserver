@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.ant.freeform</type>
+    <configuration>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/1">
+            <name>DALServer</name>
+        </general-data>
+        <general-data xmlns="http://www.netbeans.org/ns/freeform-project/2">
+            <!-- Do not use Project Properties customizer when editing this file manually. -->
+            <name>DALServer</name>
+            <properties/>
+            <folders>
+                <source-folder>
+                    <label>DALServer</label>
+                    <location>.</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcDALI/src</label>
+                    <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcDALI/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcTAP/src</label>
+                    <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcTAP/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/cds-savot-3.0/savot/model</label>
+                    <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/cds-savot-3.0/savot/model</location>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcUWS/src</label>
+                    <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcUWS/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/u1/vo/jsqlparser/src</label>
+                    <location>/Volumes/userdata/u1/vo/jsqlparser/src</location>
+                </source-folder>
+                <source-folder>
+                    <label>src</label>
+                    <type>java</type>
+                    <location>src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>tests</label>
+                    <type>java</type>
+                    <location>tests</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/cds-savot-3.0/savot/model</label>
+                    <type>java</type>
+                    <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/cds-savot-3.0/savot/model</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcDALI/src</label>
+                    <type>java</type>
+                    <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcDALI/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcTAP/src</label>
+                    <type>java</type>
+                    <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcTAP/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcUWS/src</label>
+                    <type>java</type>
+                    <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcUWS/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+                <source-folder>
+                    <label>/Volumes/userdata/u1/vo/jsqlparser/src</label>
+                    <type>java</type>
+                    <location>/Volumes/userdata/u1/vo/jsqlparser/src</location>
+                    <encoding>UTF-8</encoding>
+                </source-folder>
+            </folders>
+            <ide-actions>
+                <action name="build">
+                    <target>build</target>
+                </action>
+                <action name="clean">
+                    <target>cleanAll</target>
+                </action>
+                <action name="javadoc">
+                    <target>javadoc</target>
+                </action>
+                <action name="test">
+                    <target>test</target>
+                </action>
+                <action name="rebuild">
+                    <target>cleanAll</target>
+                    <target>build</target>
+                </action>
+                <action name="debug">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>debug-nb</target>
+                </action>
+            </ide-actions>
+            <export>
+                <type>folder</type>
+                <location>build/WEB-INF/classes</location>
+                <build-target>build</build-target>
+            </export>
+            <export>
+                <type>jar</type>
+                <location>lib/cds-savot-3.0.jar</location>
+                <build-target>build</build-target>
+            </export>
+            <export>
+                <type>jar</type>
+                <location>lib/cadcDALI.jar</location>
+                <build-target>build</build-target>
+            </export>
+            <export>
+                <type>jar</type>
+                <location>lib/cadcTAP.jar</location>
+                <build-target>build</build-target>
+            </export>
+            <export>
+                <type>jar</type>
+                <location>lib/cadcUWS.jar</location>
+                <build-target>build</build-target>
+            </export>
+            <view>
+                <items>
+                    <source-folder style="packages">
+                        <label>src</label>
+                        <location>src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>tests</label>
+                        <location>tests</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/cds-savot-3.0/savot/model</label>
+                        <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/cds-savot-3.0/savot/model</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcDALI/src</label>
+                        <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcDALI/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcTAP/src</label>
+                        <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcTAP/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcUWS/src</label>
+                        <location>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcUWS/src</location>
+                    </source-folder>
+                    <source-folder style="packages">
+                        <label>/Volumes/userdata/u1/vo/jsqlparser/src</label>
+                        <location>/Volumes/userdata/u1/vo/jsqlparser/src</location>
+                    </source-folder>
+                    <source-file>
+                        <location>build.xml</location>
+                    </source-file>
+                </items>
+                <context-menu>
+                    <ide-action name="build"/>
+                    <ide-action name="rebuild"/>
+                    <ide-action name="clean"/>
+                    <ide-action name="javadoc"/>
+                    <ide-action name="test"/>
+                    <ide-action name="debug"/>
+                </context-menu>
+            </view>
+            <subprojects/>
+        </general-data>
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/3">
+            <compilation-unit>
+                <package-root>src</package-root>
+                <classpath mode="compile">lib/cds-savot-3.0.jar:lib/kxml2-2.3.0.jar:lib/texttable.jar:lib/nom-tam-fits-1.11.jar:lib/mysql-connector-java-5.1.26-bin.jar:lib/postgresql-jdbc.jar:lib/ojdbc6.jar:lib/horizon-data.jar:lib/cadcDALI.jar:lib/cadcLog.jar:lib/cadcRegistryClient.jar:lib/cadcTAP.jar:lib/cadcUWS.jar:lib/cadcUtil.jar:lib/cadcVOSI.jar:lib/commons-fileupload.jar:lib/commons-logging.jar:lib/javacsv.jar:lib/jdom2.jar:lib/jsqlparser.jar:lib/log4j.jar:lib/org.restlet.ext.fileupload.jar:lib/org.restlet.ext.servlet.jar:lib/org.restlet.jar:lib/servlet-api.jar:lib/spring.jar:lib/xerces.jar:lib/xmlParserAPIs-2.6.1.jar:lib/commons-dbcp-1.4.jar:lib/commons-cli-1.3.jar:lib/commons-pool-1.6.jar</classpath>
+                <built-to>build/WEB-INF/classes</built-to>
+                <source-level>1.7</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>tests</package-root>
+                <unit-tests/>
+                <source-level>1.7</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/cds-savot-3.0/savot/model</package-root>
+                <classpath mode="compile">lib/cds-savot-3.0.jar</classpath>
+                <built-to>lib/cds-savot-3.0.jar</built-to>
+                <source-level>1.7</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcDALI/src</package-root>
+                <classpath mode="compile">lib/log4j.jar:lib/jdom2.jar:lib/junit-4.8.1.jar:lib/cadcUtil.jar:lib/cadcUWS.jar</classpath>
+                <built-to>lib/cadcDALI.jar</built-to>
+                <source-level>1.7</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcTAP/src</package-root>
+                <classpath mode="compile">lib/log4j.jar:lib/cadcLog.jar:lib/cadcDALI.jar:lib/cadcRegistryClient.jar:lib/cadcUtil.jar:lib/cadcUWS.jar:lib/cadcVOSI.jar:lib/commons-fileupload.jar:lib/commons-logging.jar:lib/javacsv.jar:lib/jdom2.jar:lib/jsqlparser.jar:lib/org.restlet.ext.fileupload.jar:lib/org.restlet.ext.servlet.jar:lib/org.restlet.jar:lib/servlet-api.jar:lib/spring.jar:lib/texttable.jar:lib/xerces.jar:lib/xmlParserAPIs-2.6.1.jar</classpath>
+                <built-to>lib/cadcTAP.jar</built-to>
+                <source-level>1.7</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>/Volumes/userdata/dtody/svn-lepus/vo/dalserver/branches/dali/vendor/opencadc/projects/cadcUWS/src</package-root>
+                <classpath mode="compile">lib/cadcUtil.jar:lib/cadcVOSI.jar:lib/commons-fileupload.jar:lib/commons-logging.jar:lib/log4j.jar:lib/org.restlet.ext.fileupload.jar:lib/org.restlet.ext.servlet.jar:lib/org.restlet.jar:lib/servlet-api.jar:lib/spring.jar:lib/texttable.jar:lib/xerces.jar:lib/xmlParserAPIs-2.6.1.jar:lib/jdom2.jar</classpath>
+                <built-to>lib/cadcUWS.jar</built-to>
+                <source-level>1.7</source-level>
+            </compilation-unit>
+            <compilation-unit>
+                <package-root>/Volumes/userdata/u1/vo/jsqlparser/src</package-root>
+                <source-level>1.7</source-level>
+            </compilation-unit>
+        </java-data>
+    </configuration>
+</project>

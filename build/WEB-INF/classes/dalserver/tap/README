@@ -1,0 +1,314 @@
+IVOA Table Access Protocol (TAP)
+-----------------------------------
+
+This directory contains the DALServer implementation of the TAP protocol.
+This is based upon the OpenCADC classes provided for UWS and TAP.  Custom
+versions of the OpenCADC-defined TableWriter and ResultStore plugin classes
+are used to interface to the output processing provided by DALServer, and
+to provide an extension capability to save query result sets directly to a
+server-resident DBMS table.  Multiple query languages (TAP LANG parameter)
+are supported.  Both synchronous and asynchronous queries are supported.
+The DALServer framework provides dynamic service configuration and table
+customization, multiple version support, and integration with related
+services such as SIA and SSA.
+
+The version of the OpenCADC code used within DALServer is maintained in
+vendor/opencadc in the DALServer source tree, with the prebuilt OpenCADC
+and external dependency JARs collected together in lib.  This makes the
+DALServer source self-contained and provides explicit version control for a
+tested version of the integrated package.  It also makes it possible to
+customize the vendor code or make temporary bug fixes if necessary.  At
+present, the OpenCADC code is captured unchanged, however refer to the
+Notes or README files in the vendor directory, or SVN, for the latest
+information on any modifications.
+
+
+Design Notes
+-------------
+
+Code Structure and Execution Sequence
+
+The OpenCADC UWS implementation uses Restlet technology (restlet.org) with
+a Servlet extension for asynchronous execution and HTTP REST processing,
+e.g., mapping URIs to jobs or job status or control endpoints.  The
+standard Java HttpServlet API is used for synchronous servlets.  UWS
+processing is based upon the concept of a persistent, stateful Job
+instance.  Job management is provided by a UWS JobManager, defining the Job
+persistence and job execution mechanisms to be used.  A custom JobRunner is
+provided by each UWS-based service to execute a service-specific Job.  For
+TAP, the generic TAP QueryRunner class (optionally extended by a service
+implementation) serves as the TAP query JobRunner.  OpenCADC TAP uses a
+Java plugin mechanism to extend the core classes to construct an actual TAP
+service.  The DALServer TAP implementation provides the required plugins as
+noted below.
+
+    Restlet (async)
+    HttpServlet (sync)
+      UWS (openCADC framework)
+**	TapJobManager
+	  - set up JobRunner, persistence
+**	TapQueryRunner
+	  - Execute the query
+**	  DalContext
+	    - Read the DALServer service configuration parameters
+	    - Compose service parameter set
+	    - Create DalContext instance and save in UWS Job context
+**	  TapQueryRunner
+**	    Create and init custom ResultStoreImpl instance
+	      - Initialize a resultStore instance
+	      - Reads a properties file to get config parameters
+	    Get DataSource for query
+	      - Servlet context link "jdbc/tapuser" points to DataSource
+	      - Optionally, identify an uploadDataSource as well
+	    Get TapSchemaDAO
+	      - Reads TAP Schema from indicated DataSource (DBMS tables)
+	    Perform Upload if any
+	      - TAP schema is dynamically extended to include the upload
+**	    MaxRecValidatorImpl
+	      - Read custom maxRows value from maxRecValidator
+	    Create TapQuery implementation
+	      - LANG specifies type of query (ADQL, SQL, PQL)
+	      - Plugin permits custom query processing
+**	    AdqlQueryImpl
+oo	    SqlQueryImpl (TBD)
+oo	    PqlQueryImpl (TBD)
+	      - Custom DALServer query translators (if implemented)
+	      - Convert input query SQL for back-end DBMS
+***	    Create and init custom TableWriterImpl instance
+	      - Implementation of OpenCADC TableWriter interface which uses
+	        the DALServer table output subsystem
+	    Execute query via JDBC
+	      - Returns JDBC resultSet
+	    Process output
+	      - Invoke TableWriter to process resultSet to output
+	      - If Sync output direct to OutputStream
+	      - If ASync output to a file or DBMS table via ResultStoreImpl
+	    Cleanup
+	      - Finish UWS job, close DBMS connection, etc.
+
+    Config
+      - The service configuration mechanism must support writing
+	runtime property files in addition to servlet context/config
+	parameters (OpenCADC uses property files for configuration).
+
+Items marked as "**" above are provided by the DALServer TAP
+implementation, with the other functionality provided unchanged by the
+OpenCADC TAP and UWS classes.  Classes named "*Impl" are implementations
+of OpenCADC plugins, to provide custom functionality for the DALServer
+implementation.  The role of the DALServer framework is most significant
+for service configuration and output processing.
+
+A client query can be input as ADQL, PQL (if/when implemented), or any
+variant of native SQL.  Multiple custom SQL processors are possible; each
+requires a SqlQueryImpl Java plugin (translator/verifier), and service
+configuration specific to the SQL processing required for a particular
+back-end and TAP service instance.  With the plugin mechanism it is even
+possible for an externally provided precompiled plugin implementation (Java
+class) to be used, i.e., a component not part of the standard DALServer
+product but dynamically installed in the runtime Webapp by the DALServer
+configuration mechanism.  The LANG param determines at runtime what
+processing is performed on the input query.
+
+The most significant DALServer components required for TAP are the
+TableWriter and ResultStore implementations.  These invoke the DALServer
+framework output processing (RequestResponse object and serializers),
+allowing output in a variety of formats, i.e., VOTable, CSV/TSV,
+text-table, and FITS (TBA).  This is also where output to a server DBMS
+table is provided.
+
+The DALServer table configuration mechanism may be used to dynamically
+customize the query output table (omit or rename fields, edit metadata,
+etc.), however this is probably only useful for single table queries, e.g.,
+a SCS or PQL query interface layered on top of the TAP implementation.
+Whether table configuration is used, and table or tables are exposed by a
+service, is determined by the service configuration.  Multiple service
+instances all sharing the same service framework can be configured to do
+very different things, e.g., anything from a cone search and/or PQL
+exposing a single table to a basic TAP service of a specific tableset to a
+full up parallel SQL query integrated with VOSpace as the ResultStore.
+
+In UWS async mode, formatted file output (e.g., VOTable or CSV) is written
+to a server-side file.  By default a simple file store exposed via UWS is
+used, however VOSpace can be supported by adding another ResultStore
+implementation (plugin), and configuring a service instance to use it.
+
+Output to a local DBMS table requires configuration of an output DataSource
+(JDBC DBMS endpoint) for which the client has create-table permission.  The
+input (query) DataSource and output DataSource may be entirely different
+database systems or accounts.  They will usually differ as the user table
+work space and permissions will be different than those for some
+configuration-controlled catalog to be queried, and very large catalogs may
+be served by dedicated hardware separate from that used for the user
+workspace.
+
+Writing the output DBMS table is a matter of iterating over the JDBC
+resultSet from the query, using INSERT on each output table row to write
+the output table.  This is done using the JDBC prepareStatement
+(server-side precompiled) and batch processing capabilities for maximum
+efficiency.  The schema of the output table is determined dynamically from
+the SELECT clause of the executed query.  The OpenCADC TableWriter
+interface is really intended for formatting a text output stream such as
+VOTable or CSV, however since it works directly on the JDBC resultSet,
+output can be directed to a DBMS table instead using custom TableWriter and
+ResultStore components working in combination.
+
+The text-based dynamic service configuration mechanism, used to configure
+all local DALServer-hosted data services, is used to configure TAP service
+instances as well.  The service configuration mechanism had to be
+generalized from what was originally provided to support TAP (or other
+UWS-based) services.  Previously, a DALServer service such as a SCS, SIA,
+or SSA service, was implemented as a single servlet supporting multiple
+operations.  That model is still supported, but has been generalized so
+that a service instance may consist of multiple servlets (hence, the
+DALServer Web-app may support any number of services, each of which may
+consist of multiple servlets).  Service configuration parameters may now be
+passed either as Servlet context or init parameters, or via runtime Java
+property files, or both.  When the service configuration is reloaded, both
+forms of parameters are dynamically updated in the deployed Web
+application.
+
+The full OpenCADC UWS mechanism is included unchanged, so all the usual
+capabilities for composing, executing, controlling, querying, etc. a Job or
+Job-list via the UWS Web/REST API are provided.  At this time only the TAP
+service implementation uses UWS, however other service classes (SIAV2 is
+also UWS-based) will do so as well in the future.  Another capability being
+considered for the future is a general UWS-based Job submission service
+capable of running any "Task" expressed as a computational component or
+container with associated parameter set controlling execution.  The current
+DALServer tasking subsystem already allows external tasks written in any
+language to be run from the DALServer framework, and adding a UWS front-end
+to support arbitrary Job execution would be straightforward.
+
+
+Implementation Classes
+
+The OpenCADC TAP implementation defines a set of plugin classes that can be
+used to customize the core TAP and UWS functionality provided.  We leverage
+these to integrate TAP into the DALServer framework and provide enhanced
+functionality.
+
+    TapJobManager.java          The UWS Job Manager for the TAP service.
+				This defines how the job is executed and
+				persisted, and defines the UWS Job Runner
+				to be used to execute the job (this is the
+				main service-specific component required by
+				UWS to run a job).  In the case of TAP, the
+				only real "job" is the TAP query.
+
+    TapQueryRunner.java         This class extends the generic TAP
+				QueryRunner class to gain access to the
+				internal TAP Job descriptor, and add
+				support to create and maintain a DalContext
+				instance for the lifetime of the Job.
+
+    DalContext.java             The DALServer runtime context for the
+				currently executing Job.  The primary
+				content consists of the service parameters
+				and the RequestResponse object used to
+				compose the service output.  The service
+				parameters include the Servlet context and
+				init parameters (for both the HttpServlet
+				and Restlet cases), HTTP client Request
+				parameters, and any service parameters
+				passed via Java property files.
+
+    TapParamSet.java		DALServer parameter set for the TAP service.
+
+    AdqlQueryImpl.java          Used to customize ADQL processing and
+				translation as necesssary for the back-end
+				DBMS.  The generic TAP code handles most of
+				this, but depending upon the SQL dialect on
+				the back-end, some additional processing
+				may be required and is provided by this
+				plugin.
+
+    SqlQueryImpl.java           This is the SQL pass-through mechanism,
+				however in general it is not as simple as
+				just passing through whatever the client
+				inputs as a SQL query.  The plugin is used
+				to customize and verify/sanitize SQL
+				queries and processing as necessary to pass
+				native SQL to the back-end DBMS.  The
+				entire query can be parsed and navigated to
+				ensure that it uses only allowable language
+				elements.  Multiple SQL plugins can be
+				registered if required for different SQL
+				dialects or usage.  If desired, custom LANG
+				names may be defined to indicate the SQL
+				dialect to be used, and to select at
+				runtime the appropriate SqlQueryImpl plugin
+				to be used.
+
+    PqlQueryImpl.java           Used to translate a query expressed as a
+				set of parameters into the equivalent SQL
+				query required for the back-end DBMS.
+				While parameter-based queries are not as
+				powerful in some ways as a language
+				providing a general expression capability,
+				parameters are higher-level active objects
+				that can provide capabilities such as
+				automated astronomy-specific frame or unit
+				conversion, advanced spatial indexing, etc.
+				Parameter-based queries allow
+				domain-specific intelligence to be
+				leveraged in the query language, and may be
+				more convenient for end users to use for
+				certain classes of usage, e.g., client
+				scripts making simple queries of flat
+				astronomical catalogs.
+
+    MaxRecValidatorImpl.java    Required if a non-zero MAXREC value is to
+				be used, to limit the maximum size of
+				individual queries.  DALServer has its own
+				MAXREC processing as part of the output
+				subsystem, but some control is required at
+				the level of the SQL query to avoid
+				generating excessively large resultSets.
+
+    TableWriterImpl.java        This component takes a JDBC resultStore as
+				input and serializes an output table in
+				some client-specified format.  For
+				DALServer this is a front-end to the
+				standard DALServer output processing
+				subsystem, which stores the table in a CDS
+				Savot (VOTable data model) instance and
+				then serializes this with a number of
+				custom output formatters.  Output of a
+				query resultSet to a DBMS table is provided
+				as another form of output; in this case the
+				query response table is saved to a DBMS
+				table rather than being returned to the
+				client.  Output of a serialized table to a
+				server-resident file is also provided, and
+				is required by the UWS mechanism.
+
+    ResultStoreImpl.java        Manages where the output is stored in local
+				server storage, in the case where the query
+				response is to be stored server-side rather
+				than returned directly to the client.  This
+				happens for UWS as well as for local DBMS
+				(myDB) types of storage.
+
+    TapSchema.java		This class can read one or more tables and
+    				automatically create a valid TAP_SCHEMA.
+				It can also update the metadata for a table,
+				e.g., if a new column is added.
+
+    DbmsTable.java		This class provides methods for reading and
+    				writing DBMS tables, saving a query ResultSet
+				to a new table, inserting data into an
+				existing table, and so forth.
+
+    TapWebService.java		Implementation of VOSI servlet capabilities
+				such as getAvailability and getTables.
+
+As noted above, the OpenCADC TAP implementation uses a plugin mechanism to
+allow an implementation to extend the core classes as needed.  This is
+driven by a file PluginFactory.properties that is installed in the runtime
+for the Web application using the service.  In the case of DALServer, the
+DALServer service configuration mechanism is used to define the plugins to
+be used and all other configuration parameters for a specific service
+instance.  The DALServer configuration mechanism will automatically
+generate the runtime Java properties file required by the OpenCADC code,
+when the service configuration is loaded.
+

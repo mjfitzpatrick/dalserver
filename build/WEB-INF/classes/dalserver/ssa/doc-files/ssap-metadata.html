@@ -1,0 +1,126 @@
+<HTML><HEAD>
+<TITLE>SSAP Keywords</TITLE>
+</HEAD><BODY>
+<TABLE width=950 align=center>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><B>SSAP Keywords</B></TD></TR>
+<TR><TD align=left><I>ID</I></TD><TD align=left><I>UTYPE</I></TD><TD align=left><I>DataType</I></TD><TD align=left><I>Unit</I></TD><TD align=left><I>Description</I></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Query Metadata</I></TD></TR>
+<TR><TD>Query</TD><TD>Query</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Query Metadata</TD></TR>
+<TR><TD>Score</TD><TD>Query.Score</TD><TD align="center">float</TD><TD align="left"></TD><TD>Degree of match to query parameters</TD></TR>
+<TR><TD>Token</TD><TD>Query.Token</TD><TD align="center">char</TD><TD align="left"></TD><TD>Continuation token for large queries</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Association Metadata</I></TD></TR>
+<TR><TD>Association</TD><TD>Association</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Association Metadata</TD></TR>
+<TR><TD>AssocType</TD><TD>Association.Type</TD><TD align="center">char</TD><TD align="left"></TD><TD>Type of association</TD></TR>
+<TR><TD>AssocID</TD><TD>Association.ID</TD><TD align="center">char</TD><TD align="left"></TD><TD>Association identifier</TD></TR>
+<TR><TD>AssocKey</TD><TD>Association.Key</TD><TD align="center">char</TD><TD align="left"></TD><TD>Key used to distinguish association elements</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Access Metadata</I></TD></TR>
+<TR><TD>Access</TD><TD>Access</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Access Metadata</TD></TR>
+<TR><TD>AcRef</TD><TD>Access.Reference</TD><TD align="center">char</TD><TD align="left"></TD><TD>URL used to access dataset</TD></TR>
+<TR><TD>Format</TD><TD>Access.Format</TD><TD align="center">char</TD><TD align="left"></TD><TD>Content or MIME type of dataset</TD></TR>
+<TR><TD>DatasetSize</TD><TD>Access.Size</TD><TD align="center">long</TD><TD align="left">kilobytes</TD><TD>Estimated dataset size</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>General Dataset Metadata</I></TD></TR>
+<TR><TD>Dataset</TD><TD>Dataset</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>General Dataset Metadata</TD></TR>
+<TR><TD>DataModel</TD><TD>Dataset.DataModel</TD><TD align="center">char</TD><TD align="left"></TD><TD>Datamodel name and version</TD></TR>
+<TR><TD>DatasetType</TD><TD>Dataset.Type</TD><TD align="center">char</TD><TD align="left"></TD><TD>Dataset or segment type</TD></TR>
+<TR><TD>DataLength</TD><TD>Dataset.Length</TD><TD align="center">long</TD><TD align="left"></TD><TD>Number of points</TD></TR>
+<TR><TD>TimeSI</TD><TD>Dataset.TimeSI</TD><TD align="center">char</TD><TD align="left"></TD><TD>SI factor and dimensions</TD></TR>
+<TR><TD>SpectralSI</TD><TD>Dataset.SpectralSI</TD><TD align="center">char</TD><TD align="left"></TD><TD>SI factor and dimensions</TD></TR>
+<TR><TD>FluxSI</TD><TD>Dataset.FluxSI</TD><TD align="center">char</TD><TD align="left"></TD><TD>SI factor and dimensions</TD></TR>
+<TR><TD>SpectralAxis</TD><TD>Dataset.SpectralAxis</TD><TD align="center">char</TD><TD align="left"></TD><TD>Table column containing spectral coord</TD></TR>
+<TR><TD>FluxAxis</TD><TD>Dataset.FluxAxis</TD><TD align="center">char</TD><TD align="left"></TD><TD>Table column containing flux values</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Dataset Identification Metadata</I></TD></TR>
+<TR><TD>DataID</TD><TD>DataID</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Dataset Identification Metadata</TD></TR>
+<TR><TD>Title</TD><TD>DataID.Title</TD><TD align="center">char</TD><TD align="left"></TD><TD>Dataset Title</TD></TR>
+<TR><TD>Creator</TD><TD>DataID.Creator</TD><TD align="center">char</TD><TD align="left"></TD><TD>Dataset creator</TD></TR>
+<TR><TD>Collection</TD><TD>DataID.Collection</TD><TD align="center">char</TD><TD align="left"></TD><TD>Data collection to which dataset belongs</TD></TR>
+<TR><TD>DatasetID</TD><TD>DataID.DatasetID</TD><TD align="center">char</TD><TD align="left"></TD><TD>IVOA Dataset ID</TD></TR>
+<TR><TD>CreatorDID</TD><TD>DataID.CreatorDID</TD><TD align="center">char</TD><TD align="left"></TD><TD>Creator's ID for the dataset</TD></TR>
+<TR><TD>CreatorDate</TD><TD>DataID.Date</TD><TD align="center">char</TD><TD align="left"></TD><TD>Data processing/creation date</TD></TR>
+<TR><TD>CreatorVersion</TD><TD>DataID.Version</TD><TD align="center">char</TD><TD align="left"></TD><TD>Version of dataset</TD></TR>
+<TR><TD>Instrument</TD><TD>DataID.Instrument</TD><TD align="center">char</TD><TD align="left"></TD><TD>Instrument name</TD></TR>
+<TR><TD>Bandpass</TD><TD>DataID.Bandpass</TD><TD align="center">char</TD><TD align="left"></TD><TD>Band as in RSM Coverage.Spectral</TD></TR>
+<TR><TD>DataSource</TD><TD>DataID.DataSource</TD><TD align="center">char</TD><TD align="left"></TD><TD>Original source of the data</TD></TR>
+<TR><TD>CreationType</TD><TD>DataID.CreationType</TD><TD align="center">char</TD><TD align="left"></TD><TD>Dataset creation type</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Curation Metadata</I></TD></TR>
+<TR><TD>Curation</TD><TD>Curation</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Curation Metadata</TD></TR>
+<TR><TD>Publisher</TD><TD>Curation.Publisher</TD><TD align="center">char</TD><TD align="left"></TD><TD>Dataset publisher</TD></TR>
+<TR><TD>PublisherDID</TD><TD>Curation.PublisherDID</TD><TD align="center">char</TD><TD align="left"></TD><TD>Publisher's ID for the dataset ID</TD></TR>
+<TR><TD>PublisherDate</TD><TD>Curation.Date</TD><TD align="center">char</TD><TD align="left"></TD><TD>Date curated dataset last modified</TD></TR>
+<TR><TD>PublisherVersion</TD><TD>Curation.Version</TD><TD align="center">char</TD><TD align="left"></TD><TD>Publisher's version of the dataset</TD></TR>
+<TR><TD>Rights</TD><TD>Curation.Rights</TD><TD align="center">char</TD><TD align="left"></TD><TD>Restrictions on data access</TD></TR>
+<TR><TD>Reference</TD><TD>Curation.Reference</TD><TD align="center">char</TD><TD align="left"></TD><TD>URL or Bibcode for documentation</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Target Metadata</I></TD></TR>
+<TR><TD>Target</TD><TD>Target</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Target Metadata</TD></TR>
+<TR><TD>TargetName</TD><TD>Target.Name</TD><TD align="center">char</TD><TD align="left"></TD><TD>Target name</TD></TR>
+<TR><TD>TargetClass</TD><TD>Target.Class</TD><TD align="center">char</TD><TD align="left"></TD><TD>Object class of observed target</TD></TR>
+<TR><TD>Redshift</TD><TD>Target.Redshift</TD><TD align="center">double</TD><TD align="left"></TD><TD>Target redshift</TD></TR>
+<TR><TD>VarAmpl</TD><TD>Target.VarAmpl</TD><TD align="center">float</TD><TD align="left"></TD><TD>Target variability amplitude (typical)</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Derived Metadata</I></TD></TR>
+<TR><TD>Derived</TD><TD>Derived</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Derived Metadata</TD></TR>
+<TR><TD>DerivedSNR</TD><TD>Derived.SNR</TD><TD align="center">float</TD><TD align="left"></TD><TD>Signal-to-noise for spectrum</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Coordinate System Metadata</I></TD></TR>
+<TR><TD>CoordSys</TD><TD>CoordSys</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Coordinate System Metadata</TD></TR>
+<TR><TD>SpaceFrameName</TD><TD>CoordSys.SpaceFrame.Name</TD><TD align="center">char</TD><TD align="left"></TD><TD>Spatial coordinate frame name</TD></TR>
+<TR><TD>SpaceFrameEquinox</TD><TD>CoordSys.SpaceFrame.Equinox</TD><TD align="center">double</TD><TD align="left">y</TD><TD>Equinox</TD></TR>
+<TR><TD>TimeFrameName</TD><TD>CoordSys.TimeFrame.Name</TD><TD align="center">char</TD><TD align="left"></TD><TD>Timescale</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Spatial Axis Characterization</I></TD></TR>
+<TR><TD>Char.SpatialAxis</TD><TD>Char.SpatialAxis</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Spatial Axis Characterization</TD></TR>
+<TR><TD>SpatialLocation</TD><TD>Char.SpatialAxis.Coverage.Location.Value</TD><TD align="center">double</TD><TD align="left">deg</TD><TD>Spatial Position</TD></TR>
+<TR><TD>SpatialExtent</TD><TD>Char.SpatialAxis.Coverage.Bounds.Extent</TD><TD align="center">double</TD><TD align="left">deg</TD><TD>Aperture angular size</TD></TR>
+<TR><TD>SpatialArea</TD><TD>Char.SpatialAxis.Coverage.Support.Area</TD><TD align="center">char</TD><TD align="left">deg</TD><TD>Aperture region</TD></TR>
+<TR><TD>SpatialSupportExtent</TD><TD>Char.SpatialAxis.Coverage.Support.Extent</TD><TD align="center">double</TD><TD align="left">sqdeg</TD><TD>Field of view area</TD></TR>
+<TR><TD>SpatialSampleExtent</TD><TD>Char.SpatialAxis.SamplingPrecision.SampleExtent</TD><TD align="center">float</TD><TD align="left"></TD><TD>Spatial bin size</TD></TR>
+<TR><TD>SpatialFillFactor</TD><TD>Char.SpatialAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor</TD><TD align="center">float</TD><TD align="left">deg</TD><TD>Spatial sampling filling factor</TD></TR>
+<TR><TD>SpatialStatError</TD><TD>Char.SpatialAxis.Accuracy.StatError</TD><TD align="center">double</TD><TD align="left">deg</TD><TD>Astrometric statistical error</TD></TR>
+<TR><TD>SpatialSysError</TD><TD>Char.SpatialAxis.Accuracy.SysError</TD><TD align="center">double</TD><TD align="left">deg</TD><TD>Astrometric systematic error</TD></TR>
+<TR><TD>SpatialCalibration</TD><TD>Char.SpatialAxis.Calibration</TD><TD align="center">char</TD><TD align="left"></TD><TD>Type of spatial coord calibration</TD></TR>
+<TR><TD>SpatialResolution</TD><TD>Char.SpatialAxis.Resolution</TD><TD align="center">double</TD><TD align="left">deg</TD><TD>Spatial resolution of data</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Spectral Axis Characterization</I></TD></TR>
+<TR><TD>Char.SpectralAxis</TD><TD>Char.SpectralAxis</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Spectral Axis Characterization</TD></TR>
+<TR><TD>SpectralAxisUcd</TD><TD>Char.SpectralAxis.Ucd</TD><TD align="center">char</TD><TD align="left"></TD><TD>UCD for spectral coord</TD></TR>
+<TR><TD>SpectralLocation</TD><TD>Char.SpectralAxis.Coverage.Location.Value</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Spectral coord value</TD></TR>
+<TR><TD>SpectralExtent</TD><TD>Char.SpectralAxis.Coverage.Bounds.Extent</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Width of spectrum</TD></TR>
+<TR><TD>SpectralStart</TD><TD>Char.SpectralAxis.Coverage.Bounds.Start</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Start in spectral coordinate</TD></TR>
+<TR><TD>SpectralStop</TD><TD>Char.SpectralAxis.Coverage.Bounds.Stop</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Stop in spectral coordinate</TD></TR>
+<TR><TD>SpectralSupportExtent</TD><TD>Char.SpectralAxis.Coverage.Support.Extent</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Effective width of spectrum</TD></TR>
+<TR><TD>SpectralSampleExtent</TD><TD>Char.SpectralAxis.SamplingPrecision.SampleExtent</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Wavelength bin size</TD></TR>
+<TR><TD>SpectralFillFactor</TD><TD>Char.SpectralAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor</TD><TD align="center">float</TD><TD align="left"></TD><TD>Spectral sampling filling factor</TD></TR>
+<TR><TD>SpectralBinSize</TD><TD>Char.SpectralAxis.Accuracy.BinSize</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Spectral coord bin size</TD></TR>
+<TR><TD>SpectralStatError</TD><TD>Char.SpectralAxis.Accuracy.StatError</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Spectral coord statistical error</TD></TR>
+<TR><TD>SpectralSysError</TD><TD>Char.SpectralAxis.Accuracy.SysError</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Spectral coord systematic error</TD></TR>
+<TR><TD>SpectralCalibration</TD><TD>Char.SpectralAxis.Calibration</TD><TD align="center">char</TD><TD align="left">m</TD><TD>Type of spectral coord calibration</TD></TR>
+<TR><TD>SpectralResolution</TD><TD>Char.SpectralAxis.Resolution</TD><TD align="center">double</TD><TD align="left">m</TD><TD>Spectral resolution FWHM</TD></TR>
+<TR><TD>SpectralResPower</TD><TD>Char.SpectralAxis.ResPower</TD><TD align="center">float</TD><TD align="left"></TD><TD>Spectral resolving power</TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Time Axis Characterization</I></TD></TR>
+<TR><TD>Char.TimeAxis</TD><TD>Char.TimeAxis</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Time Axis Characterization</TD></TR>
+<TR><TD>TimeLocation</TD><TD>Char.TimeAxis.Coverage.Location.Value</TD><TD align="center">double</TD><TD align="left">d</TD><TD>Midpoint of exposure on MJD scale</TD></TR>
+<TR><TD>TimeExtent</TD><TD>Char.TimeAxis.Coverage.Bounds.Extent</TD><TD align="center">double</TD><TD align="left">s</TD><TD>Total exposure time</TD></TR>
+<TR><TD>TimeStart</TD><TD>Char.TimeAxis.Coverage.Bounds.Start</TD><TD align="center">double</TD><TD align="left">d</TD><TD>Start time</TD></TR>
+<TR><TD>TimeStop</TD><TD>Char.TimeAxis.Coverage.Bounds.Stop</TD><TD align="center">double</TD><TD align="left">d</TD><TD>Stop time</TD></TR>
+<TR><TD>TimeSupportExtent</TD><TD>Char.TimeAxis.Coverage.Support.Extent</TD><TD align="center">double</TD><TD align="left">s</TD><TD>Effective exposure time</TD></TR>
+<TR><TD>TimeSampleExtent</TD><TD>Char.TimeAxis.SamplingPrecision.SampleExtent</TD><TD align="center">double</TD><TD align="left">s</TD><TD>Time bin size</TD></TR>
+<TR><TD>TimeFillFactor</TD><TD>Char.TimeAxis.SamplingPrecision.SamplingPrecisionRefVal.FillFactor</TD><TD align="center">float</TD><TD align="left"></TD><TD>Time sampling filling factor</TD></TR>
+<TR><TD>TimeStatError</TD><TD>Char.TimeAxis.Accuracy.StatError</TD><TD align="center">double</TD><TD align="left">s</TD><TD>Time coord statistical error</TD></TR>
+<TR><TD>TimeSysError</TD><TD>Char.TimeAxis.Accuracy.SysError</TD><TD align="center">double</TD><TD align="left">s</TD><TD>Time coord systematic error</TD></TR>
+<TR><TD>TimeCalibration</TD><TD>Char.TimeAxis.Calibration</TD><TD align="center">char</TD><TD align="left"></TD><TD>Type of coord calibration</TD></TR>
+<TR><TD>TimeResolution</TD><TD>Char.TimeAxis.Resolution</TD><TD align="center">double</TD><TD align="left">s</TD><TD></TD></TR>
+<TR><TD colspan=5></TD></TR>
+<TR><TD colspan=5 bgcolor="LightGray" align=center><I>Flux Axis Characterization</I></TD></TR>
+<TR><TD>Char.FluxAxis</TD><TD>Char.FluxAxis</TD><TD width=60 align="center">GROUP</TD><TD width=50 align="left"></TD><TD>Flux Axis Characterization</TD></TR>
+<TR><TD>FluxAxisUcd</TD><TD>Char.FluxAxis.Ucd</TD><TD align="center">char</TD><TD align="left"></TD><TD>UCD for flux</TD></TR>
+<TR><TD>FluxStatError</TD><TD>Char.FluxAxis.Accuracy.StatError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Flux statistical error</TD></TR>
+<TR><TD>FluxSysError</TD><TD>Char.FluxAxis.Accuracy.SysError</TD><TD align="center">double</TD><TD align="left"></TD><TD>Flux systematic error</TD></TR>
+<TR><TD>FluxCalibration</TD><TD>Char.FluxAxis.Calibration</TD><TD align="center">char</TD><TD align="left"></TD><TD>Type of flux calibration</TD></TR>
+</TABLE>
+</BODY></HTML>

@@ -1,0 +1,29 @@
+# PluginFactory Configuration.
+#
+# Plugins are currently used only by TAP services, but
+# the mechanism is more general and could later be extended
+# to other services.  This config file gets converted to a
+# runtime Java properties file that is read by the OpenCADC
+# pluginFactory code.
+# ---------------------------------------------------------
+
+[pset]
+
+pset-name = PluginFactory
+description = Plugin configuration for the TAP service.
+
+# Commented out values are the defaults, shown as examples to customise
+# behaviour, subclass the specified class and change the configuration here.
+
+# Configure supported values of LANG parameter and the TapQuery implementation
+ca.nrc.cadc.tap.TapQuery.langValues = ADQL ADQL-2.0
+ADQL =     dalserver.tap.AdqlQueryImpl
+ADQL-2.0 = dalserver.tap.AdqlQueryImpl
+
+ca.nrc.cadc.tap.MaxRecValidator.impl = dalserver.tap.MaxRecValidatorImpl
+#ca.nrc.cadc.tap.UploadManager = ca.nrc.cadc.tap.DefaultUploadManager
+ca.nrc.cadc.tap.TableWriter = dalserver.tap.TapTableWriter
+#ca.nrc.cadc.tap.writer.format.FormatFactory = ca.nrc.cadc.tap.writer.format.DefaultFormatFactory
+
+# The package name here could be changed now that we have a config file
+ca.nrc.cadc.tap.ResultStore = dalserver.tap.ResultStoreImpl

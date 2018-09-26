@@ -1,0 +1,26 @@
+# SIAP Null/Echo Service (used for testing and to demo the service interface).
+# --------------------------------------------------------------------------- 
+
+[service]
+
+service-name = siap-null
+service-class = sia
+description = 
+	A generic dataless SIAP service which implements the SIAP
+	interface but does not serve any actual data.  Provides a
+	base class to demonstrate the SIA protocol as well as a
+	base class for constructing actual SIAP data services.
+
+minorVersion = test
+serviceName = siap
+serviceClass = siap
+
+[servlet]
+
+servlet-name = siap
+servlet-class = dalserver.sia.SiapServlet
+[init-params]
+[servlet-mapping]
+servlet-name = siap
+url-pattern = /siap
+

@@ -1,0 +1,682 @@
+<!-- DALServer Ant build script.
+  See http://tomcat.apache.org/tomcat-5.0-doc/appdev/build.xml.txt
+  for further information.
+-->
+
+<project name="DALServer" default="compile" basedir=".">
+
+<!-- ===================== Property Definitions =========================== -->
+
+  <property environment="env"/>
+  <property file="lib/build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+  <property name="app.name"      value="ivoa-dal"/>
+  <property name="app.path"      value="/${app.name}"/>
+  <property name="app.version"   value="0.7-sia2dev"/>
+  <property name="lib.name"      value="dalserver"/>
+  <property name="build.home"    value="${basedir}/build"/>
+  <property name="config.home"    value="${basedir}/config"/>
+  <property name="catalina.home" location="${env.CATALINA_HOME}"/>
+  <property name="dist.home"     value="${basedir}/dist"/>
+  <property name="docs.home"     value="${dist.home}/docs"/>
+  <property name="javadoc.home"  value="${dist.home}/docs/javadoc"/>
+  <property name="docs.api"      value="${docs.home}"/>
+  <property name="manager.url"   value="http://localhost:8080/manager"/>
+  <property name="src.home"      value="${basedir}/src"/>
+  <property name="web.home"      value="${basedir}/web"/>
+  <property name="tests.home"    value="${basedir}/tests"/>
+  <property name="tests.reports" value="${build.home}/testreports"/>
+  <property name="classes"       value="${build.home}/WEB-INF/classes"/>
+  <property name="tclasses"      value="${build.home}/tclasses"/>
+  <property name="tests.data"    value="${build.home}/tdata"/>
+  <property name="tmp"           value="${build.home}/tmp"/>
+  <property name="etc"           value="${basedir}/etc"/>
+
+  <target name="app-prop" depends="-app-prop-specified,-app-prop-default">
+    <property name="app.path" value="/${app.name}"/>
+    <property name="db.jdbc.url" value="jdbc:${db.ms.type}://localhost:3306/"/>
+    <property name="db.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+    <property name="app.war" value="${app.name}.war"/>
+  </target>
+  <target name="-app-prop-specified" if="app.home">
+    <property file="${app.home}/app.properties"/>
+    <property name="app.dist" value="${app.home}"/>
+    <property name="app.build" value="${app.home}/build"/>
+    <echo/>
+    <echo>Building ${app.name} in the ${app.home} directory</echo>
+    <echo/>
+  </target>
+  <target name="-app-prop-default" unless="app.home">
+    <property name="app.name" value="ivoa-dal"/>
+    <property name="app.version"   value="0.7-sia2dev"/>
+    <property name="app.dist" value="${dist.home}"/>
+    <property name="app.build" value="${build.home}"/>
+  </target>
+
+
+<!-- ================== Custom Ant Task Definitions ======================= -->
+
+  <target name="tomcat-taskdef" depends="test" if="env.CATALINA_HOME"
+          description="Create tomcat tasks">
+
+    <taskdef name="deploy"   classname="org.apache.catalina.ant.DeployTask"/>
+    <taskdef name="list"     classname="org.apache.catalina.ant.ListTask"/>
+    <taskdef name="reload"   classname="org.apache.catalina.ant.ReloadTask"/>
+    <taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"/>
+  </target>
+
+<!--  ==================== Compilation Control Options ==================== -->
+
+  <property name="compile.debug"       value="true"/>
+  <property name="compile.deprecation" value="false"/>
+  <property name="compile.optimize"    value="false"/>
+  <property name="compile.source"      value="1.5"/>
+  <property name="compile.target"      value="1.5"/>
+
+<!-- ================= External Dependencies =========================== -->
+
+  <property name="cds-savot-3.0.jar" value="${basedir}/lib/cds-savot-3.0.jar"/>
+  <property name="kxml2.jar" value="${basedir}/lib/kxml2-2.3.0.jar"/>
+  <property name="texttable.jar" value="${basedir}/lib/texttable.jar"/>
+  <property name="fits.jar" value="${basedir}/lib/nom-tam-fits-1.11.jar"/>
+  <property name="nom.tam.fits.jar" value="${basedir}/lib/nom-tam-fits-1.11.jar"/>
+  <property name="mysql-jdbc.jar" 
+            value="${basedir}/lib/mysql-connector-java-5.1.26-bin.jar"/>
+  <property name="postgresql-jdbc.jar" 
+            value="${basedir}/lib/postgresql-jdbc.jar"/>
+  <property name="oracle-jdbc.jar" 
+            value="${basedir}/lib/ojdbc14.jar"/>
+  <property name="junit.jar" value="${basedir}/lib/junit-4.8.1.jar"/>
+  <property name="nekohtml.jar" value="${basedir}/lib/nekohtml.jar"/>
+
+  <property name="cadcDALI.jar" value="${basedir}/lib/cadcDALI.jar"/>
+  <property name="cadcLog.jar" value="${basedir}/lib/cadcLog.jar"/>
+  <property name="cadcRegistryClient.jar"
+	    value="${basedir}/lib/cadcRegistryClient.jar"/>
+  <property name="cadcTAP.jar" value="${basedir}/lib/cadcTAP.jar"/>
+  <property name="cadcUWS.jar" value="${basedir}/lib/cadcUWS.jar"/>
+  <property name="cadcUtil.jar" value="${basedir}/lib/cadcUtil.jar"/>
+  <property name="cadcVOSI.jar" value="${basedir}/lib/cadcVOSI.jar"/>
+
+  <property name="commons-fileupload.jar"
+	    value="${basedir}/lib/commons-fileupload.jar"/>
+  <property name="commons-logging.jar"
+	    value="${basedir}/lib/commons-logging.jar"/>
+  <property name="commons-cli.jar"
+	    value="${basedir}/lib/commons-cli-1.3.jar"/>
+  <property name="commons-dbcp.jar"
+	    value="${basedir}/lib/commons-dbcp-1.4.jar"/>
+  <property name="commons-pool.jar"
+	    value="${basedir}/lib/commons-pool-1.6.jar"/>
+  <property name="javax.servlet.jar" value="${basedir}/lib/javax.servlet.jar"/>
+  <property name="javacsv.jar" value="${basedir}/lib/javacsv.jar"/>
+  <property name="jdom2.jar" value="${basedir}/lib/jdom2.jar"/>
+  <property name="jsqlparser.jar" value="${basedir}/lib/jsqlparser.jar"/>
+  <property name="log4j.jar" value="${basedir}/lib/log4j.jar"/>
+  <property name="org.restlet.ext.fileupload.jar"
+	    value="${basedir}/lib/org.restlet.ext.fileupload.jar"/>
+  <property name="org.restlet.ext.servlet.jar"
+	    value="${basedir}/lib/org.restlet.ext.servlet.jar"/>
+  <property name="org.restlet.jar" value="${basedir}/lib/org.restlet.jar"/>
+  <property name="spring.jar" value="${basedir}/lib/spring.jar"/>
+  <property name="xerces.jar" value="${basedir}/lib/xerces.jar"/>
+  <property name="xmlParserAPIs.jar"
+	    value="${basedir}/lib/xmlParserAPIs-2.6.1.jar"/>
+
+<!-- ==================== Compilation Classpath =========================== -->
+
+  <path id="compile.classpath">
+    <pathelement location="${classes}" />
+
+    <!-- Include all external JAR files here -->
+    <pathelement location="${cds-savot-3.0.jar}"/>
+    <pathelement location="${kxml2.jar}"/>
+    <pathelement location="${texttable.jar}"/>
+    <pathelement location="${fits.jar}"/>
+    <pathelement location="${nom.tam.fits.jar}"/>
+    <pathelement location="${mysql-jdbc.jar}"/>
+    <pathelement location="${postgresql-jdbc.jar}"/>
+    <pathelement location="${oracle-jdbc.jar}"/>
+    <pathelement location="${basedir}/lib/FITSWCS-2.4+dev.jar"/>
+    <pathelement location="${basedir}/lib/horizon-data.jar"/>
+
+    <pathelement location="${cadcDALI.jar}"/>
+    <pathelement location="${cadcLog.jar}"/>
+    <pathelement location="${cadcRegistryClient.jar}"/>
+    <pathelement location="${cadcTAP.jar}"/>
+    <pathelement location="${cadcUWS.jar}"/>
+    <pathelement location="${cadcUtil.jar}"/>
+    <pathelement location="${cadcVOSI.jar}"/>
+
+    <pathelement location="${commons-fileupload.jar}"/>
+    <pathelement location="${commons-logging.jar}"/>
+    <pathelement location="${commons-cli.jar}"/>
+    <pathelement location="${commons-dbcp.jar}"/>
+    <pathelement location="${commons-pool.jar}"/>
+    <pathelement location="${javax.servlet.jar}"/>
+    <pathelement location="${javacsv.jar}"/>
+    <pathelement location="${jdom2.jar}"/>
+    <pathelement location="${jsqlparser.jar}"/>
+    <pathelement location="${log4j.jar}"/>
+    <pathelement location="${org.restlet.ext.fileupload.jar}"/>
+    <pathelement location="${org.restlet.ext.servlet.jar}"/>
+    <pathelement location="${org.restlet.jar}"/>
+    <pathelement location="${spring.jar}"/>
+    <pathelement location="${xerces.jar}"/>
+    <pathelement location="${xmlParserAPIs.jar}"/>
+
+    <!-- Include all elements that Tomcat exposes to applications -->
+    <!-- Uncomment the following for Tomcat 6.
+	<fileset dir="${catalina.home}/bin">
+	  <include name="*.jar"/>
+	</fileset>
+	<pathelement location="${catalina.home}/lib"/>
+	<fileset dir="${catalina.home}/lib">
+	  <include name="*.jar"/>
+	</fileset>
+          -->
+
+    <!-- Uncomment the following for Tomcat 5.5.
+	<pathelement location="${catalina.home}/common/classes"/>
+	<fileset dir="${catalina.home}/common/endorsed">
+	  <include name="*.jar"/>
+	</fileset>
+	<fileset dir="${catalina.home}/common/lib">
+	  <include name="*.jar"/>
+	</fileset>
+	<pathelement location="${catalina.home}/shared/classes"/>
+	<fileset dir="${catalina.home}/shared/lib">
+	  <include name="*.jar"/>
+	</fileset>
+	<fileset dir="${catalina.home}/server/lib">
+	  <include name="*.jar"/>
+	</fileset>
+      -->
+
+  </path>
+
+  <path id="compile.tests.classpath">
+    <pathelement location="${tclasses}" />
+    <path refid="compile.classpath" />
+    <pathelement location="${junit.jar}"/>
+  </path>
+
+<!-- ==================== All Target ====================================== -->
+
+  <target name="all" depends="cleanAll,compile"
+   description="Clean build and dist directories, then compile"/>
+
+<!-- ==================== Clean Target ==================================== -->
+
+  <target name="clean"
+   description="Delete build directory">
+    <delete dir="${build.home}"/>
+    <ant dir="${basedir}/prototype" antfile="build-loaddb.xml" 
+         target="clean" inheritall="false"/>
+  </target>
+
+
+<!-- ==================== CleanAll Target ================================= -->
+
+  <target name="cleanAll" depends="clean"
+          description="Delete build and dist directories">
+    <delete dir="${dist.home}"/>
+    <!-- <delete dir="${web.home}/README.txt"/> -->
+    <delete dir="${web.home}/docs/javadoc"/>
+  </target>
+
+<!-- ==================== Compile Targets ================================= -->
+
+  <target name="compile" depends="prepare"
+   description="Compile Java sources">
+
+    <!-- Compile Java classes as necessary -->
+    <javac srcdir="${src.home}"
+          destdir="${classes}"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}"
+           source="${compile.source}"
+           target="${compile.target}">
+        <classpath refid="compile.classpath"/>
+    </javac>
+
+    <!-- Copy application resources -->
+    <copy  todir="${classes}">
+      <fileset dir="${src.home}" excludes="**/*.java"/>
+    </copy>
+    <copy todir="${classes}/dalserver/slap"
+          file="${basedir}/lib/slap-keywords.xml"/>
+  </target>
+
+  <target name="compilefile" depends="prepare" if="src-file"
+          description="Compile a single Test class">
+
+    <!-- Compile Java classes as necessary -->
+    <javac srcdir="${src.home}"
+          destdir="${classes}"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+        <classpath refid="compile.classpath"/>
+        <include name="${src-file}"/>
+    </javac>
+  </target>
+
+<!-- ==================== Testing Targets ================================= -->
+
+  <target name="compiletests" depends="test-init,compile"
+          description="Compile Test classes">
+
+    <!-- Compile Java classes as necessary -->
+    <javac srcdir="${tests.home}"
+          destdir="${tclasses}"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+        <classpath refid="compile.tests.classpath"/>
+    </javac>
+
+    <!-- Copy test resources -->
+    <copy  todir="${tclasses}">
+      <fileset dir="${tests.home}" excludes="**/*.java,**/resources/**"/>
+    </copy>
+
+    <copy  todir="${tests.data}">
+      <fileset dir="${tests.home}/resources/testdata" />
+    </copy>
+
+  </target>
+
+  <target name="compiletestfile" depends="test-init,prepare" if="src-file"
+          description="Compile a single Test class">
+
+    <!-- Compile Java classes as necessary -->
+    <javac srcdir="${tests.home}"
+          destdir="${tclasses}"
+            debug="${compile.debug}"
+      deprecation="${compile.deprecation}"
+         optimize="${compile.optimize}">
+        <classpath refid="compile.tests.classpath"/>
+        <include name="${src-file}"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="compiletests"
+          description="Run JUnit Tests">
+    <junit printsummary="yes"  includeAntRuntime="true" haltonfailure="yes">
+       <classpath refid="compile.tests.classpath" />
+       <formatter type="plain" />
+       <batchtest todir="${tests.reports}">
+         <fileset dir="${tclasses}">
+           <include name="**/*Test.class" />
+           <include name="**/*TestCase.class" />
+         </fileset>
+       </batchtest>
+       <sysproperty key="test.tmpdir" value="${tmp}"/>
+       <sysproperty key="test.outdir" value="${tests.data}"/>
+    </junit>
+  </target>
+
+  <target name="testclass" if="test-class"
+          description="Run a single JUnit Test class">
+    <junit printsummary="yes"  includeAntRuntime="true" haltonfailure="yes">
+       <classpath refid="compile.tests.classpath" />
+       <formatter type="plain" />
+       <batchtest todir="${tests.reports}">
+         <fileset dir="${tclasses}">
+           <include name="**/${test-class}.class" />
+         </fileset>
+       </batchtest>
+       <sysproperty key="test.tmpdir" value="${tmp}"/>
+       <sysproperty key="test.outdir" value="${tests.data}"/>
+    </junit>
+  </target>
+
+<!-- ==================== Build Target ==================================== -->
+
+  <target name="build" depends="jar,javadoc"
+          description="Build the library and documentation"/>
+
+<!-- ==================== Dist Target ===================================== -->
+
+  <target name="dist" depends="build"
+   description="Create binary distribution">
+
+    <!-- Copy documentation subdirectories -->
+    <copy todir="${dist.home}/docs">
+      <fileset dir="${web.home}/docs"/>
+    </copy>
+
+    <!-- Create a library JAR file for use by extension packages -->
+    <jar jarfile="${dist.home}/${app.name}.jar"
+         basedir="${build.home}/WEB-INF/classes"/>
+
+    <!-- Create application JAR file
+    <jar jarfile="${dist.home}/${app.name}-${app.version}.war"
+         basedir="${build.home}"/> -->
+
+    <jar jarfile="${dist.home}/${app.name}.war"
+         basedir="${build.home}"/>
+
+    <!-- Copy the configuration templates -->
+    <copy todir="${dist.home}">
+      <fileset dir="${config.home}"/>
+    </copy>
+ 
+    <!-- Copy additional files to ${dist.home} as necessary -->
+
+  </target>
+
+
+<!-- ==================== War Target ===================================== -->
+
+  <target name="war" depends="compile"
+   description="Update only the War file">
+
+    <jar jarfile="${dist.home}/${app.name}.war"
+         basedir="${build.home}"/>
+  </target>
+
+
+<!-- ==================== Install Target ================================== -->
+
+<!-- Tell Tomcat to dynamically install this web application and
+  make it available for execution.  If you have already installed
+  this application, and simply want Tomcat to recognize that you
+  have updated Java classes (or the web.xml file), use the "reload"
+  target instead.  -->
+
+  <target name="install" depends="compile"
+   description="Install application to servlet container">
+
+    <deploy url="${manager.url}"
+       username="${manager.username}"
+       password="${manager.password}"
+           path="${app.path}"
+       localWar="file://${dist.home}"/>
+
+  </target>
+
+
+<!-- ==================== Javadoc Target ================================== -->
+
+  <target name="javadoc" depends="compile"
+   description="Create Javadoc API documentation">
+    <!-- Cannot use ant.javadoc here due to a bug which prevents doc-files
+         from being copied when -sourcepath is an absolute path.  -->
+    <exec executable="javadoc">
+	<arg value="-d"/>
+	<arg value="web/docs/javadoc"/>
+	<arg value="-classpath"/>
+	<arg value="${compile.classpath}"/> 
+	<arg value="-sourcepath"/>
+	<arg value="src"/>
+	<arg value="dalserver"/>
+	<arg value="dalserver.conf"/>
+	<arg value="dalserver.scs"/>
+	<arg value="dalserver.sia"/>
+	<arg value="dalserver.ssa"/>
+	<arg value="dalserver.sla"/>
+	<arg value="dalserver.tap"/>
+	<!--
+	<arg value="dataservices"/>
+	-->
+	<!--
+	<arg value="-subpackages"/>
+	<arg value="dalserver:dataServices"/>
+	-->
+    </exec>
+  </target>
+
+
+<!-- ====================== List Target =================================== -->
+
+  <target name="list"
+   description="List installed applications on servlet container">
+
+    <list    url="${manager.url}"
+        username="${manager.username}"
+        password="${manager.password}"/>
+
+  </target>
+
+
+<!-- ==================== Prepare Target ================================== -->
+
+  <target name="init">
+      <mkdir dir="${build.home}"/>
+      <mkdir dir="${classes}"/>
+      <mkdir dir="${docs.api}"/>
+      <mkdir dir="${web.home}"/>
+      <mkdir dir="${dist.home}"/>
+      <mkdir dir="${docs.home}"/>
+      <mkdir dir="${javadoc.home}"/>
+      <copy file="${etc}/dist.readme" tofile="${dist.home}/README" />
+  </target>
+
+  <target name="test-init" depends="init">
+      <mkdir dir="${tclasses}"/>
+      <mkdir dir="${tests.reports}"/>
+      <mkdir dir="${tmp}"/>
+  </target>
+
+  <target name="app-init" depends="app-prop">
+      <mkdir dir="${app.build}"/>
+      <mkdir dir="${app.build}/WEB-INF/lib"/>
+  </target>
+
+  <target name="prepare" depends="init">
+
+    <!-- Copy static content of this web application -->
+    <copy todir="${build.home}">
+      <fileset dir="${web.home}"/>
+    </copy>
+
+    <!-- Copy external dependencies as required -->
+    <mkdir  dir="${build.home}/WEB-INF/lib"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${cds-savot-3.0.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${kxml2.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${texttable.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${mysql-jdbc.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${postgresql-jdbc.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${oracle-jdbc.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${nom.tam.fits.jar}"/>
+
+    <copy todir="${build.home}/WEB-INF/lib" file="${cadcDALI.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${cadcLog.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${cadcRegistryClient.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${cadcTAP.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${cadcUWS.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${cadcUtil.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${cadcVOSI.jar}"/>
+
+    <copy todir="${build.home}/WEB-INF/lib" file="${commons-fileupload.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${commons-logging.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${commons-cli.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${commons-dbcp.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${commons-pool.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${javax.servlet.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${javacsv.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${jdom2.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${jsqlparser.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${log4j.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${org.restlet.ext.fileupload.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${org.restlet.ext.servlet.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${org.restlet.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${spring.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${xerces.jar}"/>
+    <copy todir="${build.home}/WEB-INF/lib" file="${xmlParserAPIs.jar}"/>
+
+    <copy tofile="${web.home}/README.txt" file="README"/>
+
+    <!-- Copy static files from external dependencies as needed -->
+    <!-- *** CUSTOMIZE HERE AS REQUIRED BY YOUR APPLICATION *** -->
+
+  </target>
+
+
+<!-- ==================== App Targets =================================== -->
+
+    <target name="TapSchema" depends="compile">
+	<java classpathref="compile.classpath" 
+	      classname="dalserver.tap.TapSchema"
+	      description="Create or update the TAP Schema">
+	    <arg line="${args}"/>
+	</java>
+    </target>
+
+  <target name="db-check" depends="app-prop"
+          description="Ensure that we can connect to the database with the configured username/passwd">
+    <fail unless="app.home">Please provide -Dapp.home= argument</fail>
+
+    <echo file="${build.home}/noop.sql"/>
+    <!-- <echo file="${build.home}/user">${db.reg.pw}</echo> -->
+    <echo message="Checking for db user, ${db.run.user}"/>
+    <!--
+    <local name="portarg"/>
+    <local name="hostarg"/>
+      -->
+    <condition property="-db-check-portarg" value=" --port=${db.conn.port}" else="">
+      <matches pattern="[0-9]+" string="${db.conn.port}"/>
+    </condition>
+    <condition property="-db-check-hostarg" value=" --host=${db.conn.host}" else="">
+      <isset property="db.conn.host"/>
+    </condition>
+
+    <exec executable="mysql" input="${build.home}/noop.sql" failonerror="false"
+          resultproperty="db.reg.user.check">
+      <arg line="--user=${db.run.user}${-db-check-hostarg}${-db-check-portarg}"/>
+      <arg value="-p${db.run.pass}"/>
+    </exec>
+    <condition property="db.run.user.exists">
+      <equals arg1="${db.run.user.check}" arg2="0"/>
+    </condition>
+
+    <echo message="Checking for database, ${db.name}"/>
+    <exec executable="mysql" input="${build.home}/noop.sql" failonerror="false"
+          resultproperty="db.name.check">
+      <arg line="--user=${db.run.user}${-db-check-hostarg}${-db-check-portarg}"/>
+      <arg value="-p${db.run.pass}"/>
+      <arg value="${db.name}"/>
+    </exec>
+    <condition property="db.name.exists">
+      <equals arg1="${db.name.check}" arg2="0"/>
+    </condition>
+
+  </target>
+
+  <target name="jar" depends="compile"
+          description="build the DALServer JAR file">
+    <jar jarfile="${dist.home}/${lib.name}.jar"
+         basedir="${build.home}/WEB-INF/classes"/>
+  </target>
+
+  <target name="app-load-table" depends="db-check"
+          description="load the table file into a database">
+    <java classpathref="compile.classpath" 
+          classname="dalserver.conf.MySQLIngestTable">
+      <arg value="${db.name}"/>
+      <arg value="${db.table.name}"/>
+      <arg value="${app.home}/${cat.conf}"/>
+      <arg value="${app.home}/${cat.file}"/>
+      <arg value="${db.build.user}"/>
+      <arg value="${db.build.pass}"/>
+    </java>
+  </target>
+
+
+<!-- ==================== Reload Target =================================== -->
+
+  <target name="reload"
+   description="Reload application on servlet container">
+
+    <reload url="${manager.url}"
+       username="${manager.username}"
+       password="${manager.password}"
+           path="${app.path}"/>
+
+  </target>
+
+
+<!-- ==================== Remove Target =================================== -->
+
+  <target name="remove"
+   description="Remove application on servlet container">
+
+    <undeploy url="${manager.url}"
+         username="${manager.username}"
+         password="${manager.password}"
+             path="${app.path}"/>
+
+  </target>
+
+<!-- ==================== Targets for Release Packaging ================ -->
+  <property name="build.ant.version" value="1.8.2"/>
+  <property name="build.ant-contrib.version" value="1.0b3"/>
+  <property name="build.ant.zipfile" 
+            value="${basedir}/apache-ant-${build.ant.version}-bin.zip"/>
+  <property name="build.ant.home" 
+            value="${basedir}/apache-ant-${build.ant.version}"/>
+  <property name="build.ant.exec" location="${basedir}/ant"/>
+
+  <target name="install-ant" depends="dl-ant">
+    <unzip src="${build.ant.zipfile}" dest="${basedir}" overwrite="false"
+           failOnEmptyArchive="true"/>
+    <chmod dir="${build.ant.home}/bin" perm="a+x" includes="*"/>
+    <copy file="${etc}/ant.sh" tofile="${basedir}/ant"/>
+    <chmod file="${basedir}/ant" perm="a+x"/>
+  </target>
+
+  <target name="install-ant-contrib" depends="install-ant">
+    <get src="http://dev.usvao.org/repos/vao/ant-contrib/ant-contrib/${build.ant-contrib.version}/ant-contrib-${build.ant-contrib.version}.jar"
+         dest="${build.ant.home}/lib" verbose="true" usetimestamp="true"/>
+  </target>
+
+  <target name="dl-ant">
+    <get src="http://dev.usvao.org/repos/vao/apache/ant/${build.ant.version}/bins/apache-ant-${build.ant.version}-bin.zip"
+         dest="${build.ant.zipfile}" usetimestamp="true" />
+  </target>
+
+<!-- ==================== Targets for VAO Prototype ==================== -->
+
+  <target name="loaddb">
+    <ant dir="${basedir}/prototype" antfile="build-loaddb.xml" 
+         target="loaddb" inheritall="false"/>
+  </target>
+
+  <target name="dropdb">
+    <ant dir="${basedir}/prototype" antfile="build-loaddb.xml" 
+         target="dropdb" inheritall="false"/>
+  </target>
+
+  <target name="testdb" depends="compiletests">
+    <junit printsummary="yes"  includeAntRuntime="true" haltonfailure="yes">
+       <classpath refid="compile.tests.classpath" />
+       <formatter type="plain" />
+       <batchtest todir="${tests.reports}">
+         <fileset dir="${tclasses}">
+           <include name="**/*TestNeedsDb.class" />
+         </fileset>
+       </batchtest>
+       <sysproperty key="test.tmpdir" value="${tmp}"/>
+       <sysproperty key="test.protodir" value="${basedir}/prototype"/>
+       <sysproperty key="test.db.datafile" value="vocube.bar"/>
+       <syspropertyset>
+         <propertyref prefix="db"/>
+       </syspropertyset>
+    </junit>
+  </target>
+
+  <target name="try">
+    <ant dir="${basedir}/prototype" antfile="build-loaddb.xml" 
+         target="try" inheritall="false"/>
+  </target>
+
+  <target name="show">
+    <echo> test classpath: ${toString:compile.tests.classpath} </echo>
+
+  </target>
+
+</project>

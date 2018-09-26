@@ -1,0 +1,131 @@
+// Query Metadata
+r.addGroup(siap.newGroup("Query"));
+r.addField(siap.newField("query_score"));
+r.addParam(siap.newParam("query_token", "UNSET"));
+
+// Association Metadata
+r.addGroup(siap.newGroup("Association"));
+r.addParam(siap.newParam("assoc_type", "UNSET"));
+r.addField(siap.newField("assoc_id"));
+r.addField(siap.newField("assoc_key"));
+
+// Access Metadata
+r.addGroup(siap.newGroup("Access"));
+r.addField(siap.newField("access_url"));
+r.addField(siap.newField("access_format"));
+r.addField(siap.newField("access_estsize"));
+
+// General Dataset Metadata
+r.addGroup(siap.newGroup("Dataset"));
+r.addParam(siap.newParam("datamodel_name", "UNSET"));
+r.addParam(siap.newParam("datamodel_prefix", "UNSET"));
+r.addParam(siap.newParam("dataproduct_type", "UNSET"));
+r.addField(siap.newField("dataproduct_subtype"));
+r.addField(siap.newField("calib_level"));
+r.addField(siap.newField("dataset_length"));
+
+// Image-specific Dataset metadata
+r.addGroup(siap.newGroup("Image"));
+r.addField(siap.newField("im_nsubarrays"));
+r.addField(siap.newField("im_naxes"));
+r.addField(siap.newField("im_naxis"));
+r.addField(siap.newField("im_pixtype"));
+r.addField(siap.newField("im_wcsaxes"));
+r.addField(siap.newField("im_dataref"));
+
+// Dataset Identification Metadata
+r.addGroup(siap.newGroup("DataID"));
+r.addField(siap.newField("obs_title"));
+r.addField(siap.newField("obs_creator_name"));
+r.addField(siap.newField("obs_collection"));
+r.addField(siap.newField("obs_creation_type"));
+
+// Provenance Metadata
+r.addGroup(siap.newGroup("Provenance"));
+r.addField(siap.newField("instrument_name"));
+r.addField(siap.newField("obs_bandpass"));
+
+// Curation Metadata
+r.addGroup(siap.newGroup("Curation"));
+r.addField(siap.newField("obs_publisher_did"));
+
+// Target Metadata
+r.addGroup(siap.newGroup("Target"));
+
+// Derived Metadata
+r.addGroup(siap.newGroup("Derived"));
+
+// Coordinate System Metadata
+r.addGroup(siap.newGroup("CoordSys"));
+
+// Spatial frame metadata
+r.addGroup(siap.newGroup("CoordSys.SpaceFrame"));
+
+// Time frame metadata
+r.addGroup(siap.newGroup("CoordSys.TimeFrame"));
+
+// Spectral frame metadata
+r.addGroup(siap.newGroup("CoordSys.SpectralFrame"));
+
+// Redshift frame metadata
+r.addGroup(siap.newGroup("CoordSys.RedshiftFrame"));
+
+// Flux (observable) frame metadata
+r.addGroup(siap.newGroup("CoordSys.FluxFrame"));
+
+// Spatial Axis Characterization
+r.addGroup(siap.newGroup("Char.SpatialAxis"));
+r.addField(siap.newField("s_ra"));
+r.addField(siap.newField("s_dec"));
+r.addField(siap.newField("s_fov"));
+r.addField(siap.newField("s_lo_ra"));
+r.addField(siap.newField("s_lo_dec"));
+r.addField(siap.newField("s_hi_ra"));
+r.addField(siap.newField("s_hi_dec"));
+r.addField(siap.newField("s_region"));
+r.addField(siap.newField("s_area"));
+r.addField(siap.newField("s_extent"));
+r.addField(siap.newField("s_fillfactor"));
+r.addField(siap.newField("s_stat_error"));
+r.addField(siap.newField("s_sys_error"));
+r.addField(siap.newField("s_calib_status"));
+r.addField(siap.newField("s_resolution"));
+
+// Spectral Axis Characterization
+r.addGroup(siap.newGroup("Char.SpectralAxis"));
+r.addField(siap.newField("em_ucd"));
+r.addField(siap.newField("em_unit"));
+r.addField(siap.newField("em_bandpass"));
+r.addField(siap.newField("em_bandwidth"));
+r.addField(siap.newField("em_min"));
+r.addField(siap.newField("em_max"));
+r.addField(siap.newField("em_fill_factor"));
+r.addField(siap.newField("em_stat_error"));
+r.addField(siap.newField("em_calib_status"));
+r.addField(siap.newField("em_resolution"));
+r.addField(siap.newField("em_respower"));
+
+// Time Axis Characterization
+r.addGroup(siap.newGroup("Char.TimeAxis"));
+r.addField(siap.newField("t_ucd"));
+r.addField(siap.newField("t_unit"));
+r.addField(siap.newField("t_midpoint"));
+r.addField(siap.newField("t_extent"));
+r.addField(siap.newField("t_min"));
+r.addField(siap.newField("t_max"));
+r.addField(siap.newField("t_exptime"));
+r.addField(siap.newField("t_fill_factor"));
+r.addField(siap.newField("t_stat_error"));
+r.addField(siap.newField("t_calib_status"));
+r.addField(siap.newField("t_resolution"));
+
+// Observable Axis Characterization
+r.addGroup(siap.newGroup("Char.ObservableAxis"));
+r.addField(siap.newField("o_ucd"));
+r.addField(siap.newField("o_unit"));
+r.addField(siap.newField("o_calib_status"));
+
+// Polarization Axis Characterization
+r.addGroup(siap.newGroup("Char.PolAxis"));
+r.addField(siap.newField("pol_ucd"));
+r.addField(siap.newField("pol_states"));

@@ -1,0 +1,46 @@
+
+DALServer SVN Revision 21
+Sep 29, 2015
+=========================
+
+vendor/cds-savot-4.0		+
+    Added v4.0 of the SAVOT lib to the source tree.  This isn't used yet
+    but can optmize things later thru use of ArrayList instead of Vector
+    in the savot/model/SavotSet.java code.  Using this would require changes
+    to dalserver$src/dalserver/tap/TapQueryResponse.java as well.  
+
+    Source obtained by cloning https://github.com/aschaaff/savot
+
+vendor/cds-savot-3.0/savot/model/SavotSet.java
+    Changed the initialization in addItem() of the Vector object to be
+
+            set = new Vector<Object>(1024, 32 * 1024);
+
+    This is an optimization for large tables where we assume a row won't 
+    have more than 1024 columns, and if we have to resize we do so at 32K
+    row increments.  In testing a table with 500K rows, 89 of 92 seconds
+    taken to write the VOTable was wasted in resizing the Vector as new
+    table rows were added to the document, this change is a 20x improvement.
+
+vendor/cds-savot-3.0/savot/pull/SavotPullEnginge.java
+    Removed 16-bit char from comment on line 454.
+
+src/dalserver/DbmsQuery.java
+    Disabled autoCommit in the connect() method for Postgres so the fetch
+    size works.  This is done explicitly in the TAP code, but not for SCS.
+
+src/dalserver/scs/ScsQuery.java
+    - Added an optional 'schemaName' parameter to allow the SCS to query
+      a table in a named schema.  The schema is set in the SCS config file
+      under the [init-params] section.
+    - Added a 'maxrec' parameter so we can set this in the result table
+      to enforce the size.  This wasn't working before and a better fix 
+      may be required.
+    - Set the DB fetch size and direction explicitly to optimize the query.
+
+src/dalserver/tap/TapQueryRunner.java
+    Increased size of setFetchSize() from 1000 to 10000.
+
+src/dalserver/tap/TapTableWriter.java
+    Added a 'maxrec' setting in the setJob() method to enforce size.
+

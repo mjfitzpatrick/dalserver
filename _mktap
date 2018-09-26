@@ -1,0 +1,14 @@
+
+
+ant TapSchema -Dargs='-d file:tap.props -s public -c'
+#ant TapSchema -Dargs='-d file:tap.props -s usno -c'
+#ant TapSchema -Dargs='-d file:tap.props -s decals -c'
+#ant TapSchema -Dargs='-d file:tap.props -s smash -c'
+
+#ant TapSchema -Dargs='-d file:tap.props -s usno -a a2 b1'
+#ant TapSchema -Dargs='-d file:tap.props -s decals -a dr1 dr1_sdss dr1_wise'
+#ant TapSchema -Dargs='-d file:tap.props -s smash -a exposure photavg photmag'
+
+ant TapSchema -Dargs='-d file:tap.props -s sne -a exposure photavg photmag'
+
+#ant TapSchema -Dargs='-d file:tap.props -s tap_schema -a schemas tables columns keys key_columns'

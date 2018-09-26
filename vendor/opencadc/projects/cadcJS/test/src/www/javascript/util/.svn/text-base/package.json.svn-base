@@ -1,0 +1,7 @@
+{
+  "scripts":
+  [
+    "../../../../../build/www/cadcJS/javascript/jquery-1.9.1.min.js",
+    "../../../../../build/www/cadcJS/javascript/cadc.util.js"
+  ]
+}

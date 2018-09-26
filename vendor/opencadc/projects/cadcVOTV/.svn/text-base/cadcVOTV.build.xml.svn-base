@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This build file constructs JavaScript packages for using the VOView classes, 
+and installs them and other needed files on a Web server.  This includes a 
+Perl script for running a proxy, which is needed for VOTABLE files that are 
+not local to the server.  If you will only be accessing tables local to the 
+server, you can set the PROXY_URL filter token value to "".
+-->
+
+<!DOCTYPE project>
+
+<project default="build" basedir=".">
+  <description>Canadian Astronomy Data Center Virtual Observatory Table Viewer 1.0</description>
+
+  <property environment="env" />
+  <property file="local.build.properties" />
+  <property name="project" value="cadcVOTV" />
+
+  <!-- site-specific build properties or overrides of values in opencadc.properties -->
+  <property file="${env.CADC_PREFIX}/etc/local.properties" />
+
+  <!-- site-specific targets, e.g. install, cannot duplicate those in opencadc.targets.xml -->
+  <import file="${env.CADC_PREFIX}/etc/local.targets.xml" optional="true" />
+
+  <!-- default properties and targets -->
+  <property file="${env.CADC_PREFIX}/etc/opencadc.properties" />
+  <import file="${env.CADC_PREFIX}/etc/opencadc.targets.xml"/>
+
+  <!-- developer convenience: place for extra targets and properties -->
+  <import file="extras.xml" optional="true" />
+
+  <target name="install" depends="build, install_www">
+    <tstamp />
+    <touch file="${build}/LASTINSTALL.${DSTAMP}_${TSTAMP}" />
+  </target>
+
+  <target name="build" depends="resourceCopy" />
+
+  <target name="resourceCopy">
+    <copy todir="${build}/www">
+      <fileset dir="src/www" />
+    </copy>
+  </target>
+
+  <target name="install_www" depends="resourceCopy, test">
+
+    <chmod perm="644">
+      <fileset dir="${build}/www"/> <!-- files -->
+    </chmod>
+    <chmod perm="755">
+      <dirset dir="${build}/www" /> <!-- directories -->
+    </chmod>
+
+    <echo message="Copying using '${copy_cmd} ${copy_args} ${build}/www/ ${www}/" />
+
+    <exec executable="${copy_cmd}">
+      <arg value="${copy_args}" />
+      <arg value="${build}/www/" />
+      <arg value="${www}/" />
+    </exec>
+
+  </target>
+
+  <target name="test" depends="build"
+          description="Runs QUnit Tests using PhantomJS">
+      
+    <!-- QUnit Javascript Unit Tests -->
+    <echo message="Executing QUnit Javascript Unit Tests..."/>
+
+    <echo message="Dynamic row adding tests"/>
+    <antcall target="js-test">
+      <param name="js-test-dir" value="test/src/row_add" />
+      <param name="js-test-name" value="cadc.votv-row-add.js" />
+    </antcall>
+
+    <echo message="VOTable Tests"/>
+    <antcall target="js-test">
+      <param name="js-test-dir" value="test/src/votable" />
+      <param name="js-test-name" value="cadc.votable.js" />
+    </antcall>
+
+    <echo message="CADC VOTV Search Filter tests"/>
+    <antcall target="js-test">
+      <param name="js-test-dir" value="test/src/search_filter" />
+      <param name="js-test-name" value="cadc.votv.search-filter.js" />
+    </antcall>
+
+    <echo message="CADC VOTV Value Filter tests"/>
+    <antcall target="js-test">
+      <param name="js-test-dir" value="test/src/value_filter" />
+      <param name="js-test-name" value="cadc.votv.value-filter.js" />
+    </antcall>
+
+    <echo message="VOTable XML reader tests"/>
+    <antcall target="js-test">
+      <param name="js-test-dir" value="test/src/xml_reader" />
+      <param name="js-test-name" value="cadc.votable.xml-reader.js" />
+    </antcall>
+
+    <echo message="VOTable CSV reader tests"/>
+    <antcall target="js-test">
+      <param name="js-test-dir" value="test/src/csv_reader" />
+      <param name="js-test-name" value="cadc.votable.csv-reader.js" />
+    </antcall>
+
+    <echo message="Sort comparer tests"/>
+    <antcall target="js-test">
+      <param name="js-test-dir" value="test/src/comparer" />
+      <param name="js-test-name" value="cadc.votv.sorter.js" />
+    </antcall>
+
+    <echo message="VOTable Streaming builder tests"/>
+    <antcall target="js-test">
+      <param name="js-test-dir" value="test/src/streaming_reader" />
+      <param name="js-test-name" value="cadc.votable.streaming-reader.js" />
+    </antcall>
+
+    <echo message="Result state tests"/>
+    <antcall target="js-test">
+      <param name="js-test-dir" value="test/src/result_state" />
+      <param name="js-test-name" value="cadc.result-state.js" />
+    </antcall>
+    
+  </target>
+
+  <target name="js-test">
+    <property name="js-test-dir" value="" />
+    <property name="js-test-name" value="" />
+
+    <apply executable="test/phantomjs" failonerror="true">
+      <arg value="test/qunit-runner.js" />
+      <arg line="--qunit test/qunit-1.10.0.js --package ${js-test-dir}/package.json --tests ${js-test-dir}/${js-test-name} --junit ${js-test-dir}/qunit-results.xml" />
+      <fileset dir="${js-test-dir}">
+        <include name="${js-test-name}" />
+        <exclude name="package.json" />
+      </fileset>
+      <srcfile/>
+    </apply>
+  </target>
+
+</project>

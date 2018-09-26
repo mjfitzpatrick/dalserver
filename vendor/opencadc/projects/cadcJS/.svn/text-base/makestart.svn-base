@@ -1,0 +1,40 @@
+#/*+
+#************************************************************************
+#****  C A N A D I A N   A S T R O N O M Y   D A T A   C E N T R E  *****
+#*
+#*   File Name:	makestart
+#*
+#*   Purpose:
+#*	This is used by makemake to automatically create a makefile.
+#*
+#*   Date		: Aug 2, 2013
+#*
+#*   Subversion data:
+#*	$URL$
+#*	$Revision$
+#*
+#*   Programmer		: Norm Hill
+#*
+#****  C A N A D I A N   A S T R O N O M Y   D A T A   C E N T R E  *****
+#************************************************************************
+#-*/
+
+TEST_CMD = test/src/www/javascript/phantomjs
+TEST_ARGS = test/src/www/javascript/qunit-runner.js --qunit test/src/www/javascript/qunit-1.10.0.js
+TEST_URI_PKG_ARGS = $(TEST_ARGS) --package test/src/www/javascript/uri/package.json --tests test/src/www/javascript/uri/test.uri.js --junit test/src/www/javascript/uri/qunit-results.xml test/src/www/javascript/uri/test.uri.js
+TEST_URI_CMD = $(TEST_CMD) $(TEST_URI_PKG_ARGS)
+TEST_UTIL_PKG_ARGS = $(TEST_ARGS) --package test/src/www/javascript/util/package.json --tests test/src/www/javascript/util/test.util.js --junit test/src/www/javascript/util/qunit-results.xml test/src/www/javascript/util/test.util.js
+TEST_UTIL_CMD = $(TEST_CMD) $(TEST_UTIL_PKG_ARGS)
+
+.PHONY: test
+
+all: rsync makelinks changegr
+
+install:
+	${RSYNC} $(RSYNC_FLAGS) $(DEST)/www $(RPS)
+
+test:
+	$(TEST_URI_CMD) && $(TEST_UTIL_CMD)
+
+makelinks:  test
+
