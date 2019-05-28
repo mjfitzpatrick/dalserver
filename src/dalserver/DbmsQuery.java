@@ -61,8 +61,8 @@ public class DbmsQuery {
 	// as identifiers in a SQL expression they are automatically mapped
 	// to lower case.  To preserve case they must be quoted.
 
-	if (this.dbType.equals("postgresql"))
-	    this.quoteNames = true;
+	//if (this.dbType.equals("postgresql"))
+	//    this.quoteNames = true;
 
 	// Load the JDBC driver (not required for newer Java versions).
 	try {
