@@ -139,10 +139,12 @@ public class ScsQuery extends DbmsQuery {
 	    rs = dbm.getColumns(null, schemaName, tableName, "%");
 
 	    // Check that we have a valid table.
-	    if (!rs.first()) {
-		throw new DalServerException(
-		    "Empty or nonexistent table (" + tableName + ")");
-	    }
+	    // FIXME -- This consumes the name of the first column which 
+	    // FIXME -- can be the id/ra/dec
+//	    if (!rs.first()) {
+//		throw new DalServerException(
+//		    "Empty or nonexistent table (" + tableName + ")");
+//	    }
 
 	    conf = new ConfigTable(params, null);
 
@@ -251,13 +253,18 @@ public class ScsQuery extends DbmsQuery {
 	String key;
 
 	try {
-	    String query = "SELECT * FROM " + sqlName(tableName);
+	    String query = "SELECT * FROM " + sqlName(schemaName+'.'+tableName);
 
 	    // If this is a positional query we need to check that RA and
 	    // DEC are in range.  A simple DBMS index on either RA or DEC
 	    // may help on large tables.  More sophisticated spatial indexing
 	    // (HTM etc.) is not yet supported.
 
+	    query += (" WHERE q3c_radial_query(" + 
+	    	      sqlName(raColumn) + "," + sqlName(decColumn) + "," + 
+	    	      ra + "," + dec + "," + sr + ")");
+
+/*
 	    if (positional && (ra_numeric || dec_numeric)) {
 		query += (" WHERE ");
 		boolean first_term = true;
@@ -302,6 +309,7 @@ public class ScsQuery extends DbmsQuery {
 			" BETWEEN " + dec1 + " AND " + dec2);
 		}
 	    }
+*/
 
 	    // Execute the query.
 	    response.addInfo(key="SQL_QUERY", new TableInfo(key, query));
@@ -338,6 +346,7 @@ public class ScsQuery extends DbmsQuery {
 		else 
 		    obj_dec = parseHMS(rs.getString(decColumn));
 
+/*
 		if (positional) {
 		    // Shift the RA coords to zero=180 to avoid wrap when
 		    // computing the OBJ_RA to RA distance.
@@ -355,6 +364,7 @@ public class ScsQuery extends DbmsQuery {
 		    if (distance(pos_ra, pos_dec, obj_ra, obj_dec) > sr)
 			continue;
 		}
+*/
 
 		response.addRow();
 		for (int i=0;  i < fields.size();  i++) {
@@ -369,7 +379,6 @@ public class ScsQuery extends DbmsQuery {
 		    else
 			response.setValue(fieldName, rs.getString(fieldName));
 		}
-
 		nrows++;
 	    }
 

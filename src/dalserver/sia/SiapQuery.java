@@ -782,6 +782,7 @@ System.err.println ("query(): '" + query + "'\n");
 		// that do not satisfy the spatial constraint.  We do a
 		// more rigorous test here as a second pass.
 
+/**/
 		if (spatial_constraint) {
 		    obj_ra = rs.getDouble(s1Column);
 		    obj_dec = rs.getDouble(s2Column);
@@ -821,6 +822,7 @@ System.err.println ("query(): '" + query + "'\n");
 		    if (dec_dist > dec_offset)
 			continue;
 		}
+/**/
 
 		// Output a record for each matched image format.  There is
 		// one archival image, but there may be several virtual
