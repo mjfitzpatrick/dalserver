@@ -335,7 +335,7 @@ public class TapSchemaDAO implements TapPlugin
      *
      * @return white list of allowed functions
      */
-    protected List<FunctionDesc> getFunctionDescs()
+    public List<FunctionDesc> getFunctionDescs()
     {
         List<FunctionDesc> functionDescs = new ArrayList<FunctionDesc>();
 
@@ -404,39 +404,67 @@ public class TapSchemaDAO implements TapPlugin
         functionDescs.add(new FunctionDesc("VARIANCE", "", "adql:DOUBLE"));
         
         // SQL String functions.
-//        functionDescs.add(new FunctionDesc("BIT_LENGTH", "", "adql:INTEGER"));
-//        functionDescs.add(new FunctionDesc("CHARACTER_LENGTH", "", "adql:INTEGER"));
-//        functionDescs.add(new FunctionDesc("LOWER", "", "adql:VARCHAR"));
-//        functionDescs.add(new FunctionDesc("OCTET_LENGTH", "", "adql:INTEGER"));
-//        functionDescs.add(new FunctionDesc("OVERLAY", "", "adql:VARCHAR")); //SQL92???
-//        functionDescs.add(new FunctionDesc("POSITION", "", "adql:INTEGER"));
-//        functionDescs.add(new FunctionDesc("SUBSTRING", "", "adql:VARCHAR"));
-//        functionDescs.add(new FunctionDesc("TRIM", "", "adql:VARCHAR"));
-//        functionDescs.add(new FunctionDesc("UPPER", "", "adql:VARCHAR"));
+        functionDescs.add(new FunctionDesc("BIT_LENGTH", "", "adql:INTEGER"));
+        functionDescs.add(new FunctionDesc("CHARACTER_LENGTH", "", "adql:INTEGER"));
+        functionDescs.add(new FunctionDesc("LOWER", "", "adql:VARCHAR"));
+        functionDescs.add(new FunctionDesc("OCTET_LENGTH", "", "adql:INTEGER"));
+        functionDescs.add(new FunctionDesc("OVERLAY", "", "adql:VARCHAR")); //SQL92???
+        functionDescs.add(new FunctionDesc("POSITION", "", "adql:INTEGER"));
+        functionDescs.add(new FunctionDesc("SUBSTRING", "", "adql:VARCHAR"));
+        functionDescs.add(new FunctionDesc("TRIM", "", "adql:VARCHAR"));
+        functionDescs.add(new FunctionDesc("UPPER", "", "adql:VARCHAR"));
 
         // SQL Date functions.
-//        functionDescs.add(new FunctionDesc("CURRENT_DATE", "", "adql:TIMESTAMP"));
-//        functionDescs.add(new FunctionDesc("CURRENT_TIME", "", "adql:TIMESTAMP"));
-//        functionDescs.add(new FunctionDesc("CURRENT_TIMESTAMP", "", "adql:TIMESTAMP"));
-//        functionDescs.add(new FunctionDesc("EXTRACT", "", "adql:TIMESTAMPs"));
+        functionDescs.add(new FunctionDesc("CURRENT_DATE", "", "adql:TIMESTAMP"));
+        functionDescs.add(new FunctionDesc("CURRENT_TIME", "", "adql:TIMESTAMP"));
+        functionDescs.add(new FunctionDesc("CURRENT_TIMESTAMP", "", "adql:TIMESTAMP"));
+        functionDescs.add(new FunctionDesc("EXTRACT", "", "adql:TIMESTAMPs"));
 //        functionDescs.add(new FunctionDesc("LOCAL_DATE", "", "adql:TIMESTAMP"));   //SQL92???
 //        functionDescs.add(new FunctionDesc("LOCAL_TIME", "", "adql:TIMESTAMP"));   //SQL92???
 //        functionDescs.add(new FunctionDesc("LOCAL_TIMESTAMP", "", "adql:TIMESTAMP"));  //SQL92???
 
         
-
-//        functionDescs.add(new FunctionDesc("BETWEEN", ""));
-//        functionDescs.add(new FunctionDesc("CASE", ""));
-//        functionDescs.add(new FunctionDesc("CAST", ""));
-//        functionDescs.add(new FunctionDesc("COALESCE", ""));
-//        functionDescs.add(new FunctionDesc("CONVERT", ""));
-//        functionDescs.add(new FunctionDesc("TRANSLATE", ""));
+        functionDescs.add(new FunctionDesc("BETWEEN", ""));
+        functionDescs.add(new FunctionDesc("CASE", ""));
+        functionDescs.add(new FunctionDesc("CAST", ""));
+        functionDescs.add(new FunctionDesc("COALESCE", ""));
+        functionDescs.add(new FunctionDesc("CONVERT", ""));
+        functionDescs.add(new FunctionDesc("TRANSLATE", ""));
         
         // Sub-selects
-//        functionDescs.add(new FunctionDesc("ALL", ""));
-//        functionDescs.add(new FunctionDesc("ANY", ""));
-//        functionDescs.add(new FunctionDesc("EXISTS", ""));
-//        functionDescs.add(new FunctionDesc("IN", ""));
+        functionDescs.add(new FunctionDesc("ALL", ""));
+        functionDescs.add(new FunctionDesc("ANY", ""));
+        functionDescs.add(new FunctionDesc("EXISTS", ""));
+        functionDescs.add(new FunctionDesc("IN", ""));
+
+        // Q3C Functions
+        functionDescs.add(new FunctionDesc("Q3C_ANG2IPIX", "", "adql:BIGINT"));
+        functionDescs.add(new FunctionDesc("Q3C_DIST", "", "adql:DOUBLE"));
+        functionDescs.add(new FunctionDesc("Q3C_DIST_PM", "", "adql:DOUBLE"));
+        functionDescs.add(new FunctionDesc("Q3C_JOIN", "", "adql:BOOL"));
+        functionDescs.add(new FunctionDesc("Q3C_JOIN_PM", "", "adql:BOOL"));
+        functionDescs.add(new FunctionDesc("Q3C_ELLIPSE_JOIN", "", "adql:INTEGER"));
+        functionDescs.add(new FunctionDesc("Q3C_RADIAL_QUERY", "", "adql:INTEGER"));
+        functionDescs.add(new FunctionDesc("Q3C_ELLIPSE_QUERY", "", "adql:INTEGER"));
+        functionDescs.add(new FunctionDesc("Q3C_POLY_QUERY", "", "adql:INTEGER"));
+        functionDescs.add(new FunctionDesc("Q3C_IPIX2ANG", "", "adql:DOUBLE"));
+        functionDescs.add(new FunctionDesc("Q3C_PIXAREA", "", "adql:DOUBLE"));
+        functionDescs.add(new FunctionDesc("Q3C_IPIXCENTER", "", "adql:BIGINT"));
+        functionDescs.add(new FunctionDesc("Q3C_VERSION", ""));
+
+        // HTM Functions
+        functionDescs.add(new FunctionDesc("HTMINDEX", "", "adql:BIGINT"));
+        functionDescs.add(new FunctionDesc("HTMLOOKUP", "", "adql:BIGINT"));
+
+        // Healpix Functions
+        functionDescs.add(new FunctionDesc("HEALPIX_ANG2IPIX_NEST", "", "adql:BIGINT"));
+        functionDescs.add(new FunctionDesc("HEALPIX_ANG2IPIX_RING", "", "adql:BIGINT"));
+        functionDescs.add(new FunctionDesc("HEALPIX_IPIX2ANG_NEST", "", "adql:DOUBLE"));
+        functionDescs.add(new FunctionDesc("HEALPIX_IPIX2ANG_RING", "", "adql:DOUBLE"));
+
+        // Selected PGSQL Functions
+        functionDescs.add(new FunctionDesc("PG_SLEEP", "", "adql:INTEGER"));
+
 
         return functionDescs;
     }

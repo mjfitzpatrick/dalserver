@@ -227,8 +227,8 @@ public class UploadParameters
         }
 
 	// MJF -- Added 'param' upload option.
-        if (!uri.getScheme().equals("http") && !uri.getScheme.equals("param"))
-            throw new UnsupportedOperationException("UPLOAD URI protocol is not supported: " + uri.toString());
+        //if (!uri.getScheme().equals("http") && !uri.getScheme.equals("param"))
+        //    throw new UnsupportedOperationException("UPLOAD URI protocol is not supported: " + uri.toString());
         return uri;
     }
     

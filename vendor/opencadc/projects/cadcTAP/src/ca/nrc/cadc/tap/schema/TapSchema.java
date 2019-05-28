@@ -82,10 +82,10 @@ import java.util.Map;
  */
 public class TapSchema
 {
-    protected List<SchemaDesc> schemaDescs = new ArrayList<SchemaDesc>();
-    protected List<FunctionDesc> functionDescs = new ArrayList<FunctionDesc>();
+    public List<SchemaDesc> schemaDescs = new ArrayList<SchemaDesc>();
+    public List<FunctionDesc> functionDescs = new ArrayList<FunctionDesc>();
     
-    protected Map<String,GroupDesc> groupDescs = new HashMap<String,GroupDesc>();
+    public Map<String,GroupDesc> groupDescs = new HashMap<String,GroupDesc>();
 
     /**
      * Default no-arg constructor.
