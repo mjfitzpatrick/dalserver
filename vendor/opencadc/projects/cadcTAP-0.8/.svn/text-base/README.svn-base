@@ -1,6 +1,0 @@
-
-This is a backwards compatible version of cadcTAP for people that pulled the code before 
-~2014-05-13. The current version (cadcTAP) is being refactored (some features extracted to
-cadcDALI) so if you w3ant to wait for it to settlem, use this fork to build your cadcTAP.jar
-file.
-

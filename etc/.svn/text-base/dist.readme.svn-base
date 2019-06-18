@@ -1,9 +1,0 @@
-DALServer Distribution
-----------------------
-
-This directory contains a prebuilt distribution of DALServer, consisting
-of the following:
-
-    docs		Javadoc for the DALServer Java classes
-    ivoa-dal.jar	JAR file for DALServer classes.
-    ivoa-dal.war	Installable Java servlet

@@ -1,1 +1,0 @@
-select schema_name, table_name, description, utype from tap_schema.tables

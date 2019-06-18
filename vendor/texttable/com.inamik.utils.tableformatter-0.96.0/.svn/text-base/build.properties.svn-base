@@ -1,7 +1,0 @@
-# $Id: build.properties,v 1.4 2008/03/02 23:51:57 dave Exp $
-build.version=0.96.0
-project.name=com.inamik.utils.tableformatter-${build.version}
-src.dir=src
-build.dir=build/${project.name}
-dist.dir=dist/${project.name}
-dist.text_files=LICENSE.txt,README.txt,TODO.txt,TestTableFormatter.java

@@ -1,1 +1,0 @@
-select * from tap_schema.key_columns

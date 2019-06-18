@@ -1,1 +1,0 @@
-select key_id, from_column, target_column from tap_schema.key_columns

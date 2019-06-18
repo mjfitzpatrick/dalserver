@@ -1,9 +1,0 @@
-CONF -- Tools for importing data collections, extracting standard
-metadata, and building DBMS tables to drive data service instances.
-This package is also used by the SLA package to populate the keyword
-factory for a spectral line list from an XML descriptor.
-
-TODO - The XML extensions to KeywordFactory used by SLA should probably
-be merged into the DALServer core.  "Conf" can then be renamed as
-"Import" or some such, and dedicated to tools for importing data
-collections.
