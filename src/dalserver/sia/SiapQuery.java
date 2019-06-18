@@ -761,8 +761,9 @@ System.err.println ("query(): poly: '" + poly + "'\n");
 System.err.println ("query(): '" + query + "'\n");
 	try {
 	    // Execute the query.
-	    String null_query = "SELECT * FROM " +
-		tableName + " WHERE (" + sqlName("id") + " = 0);";
+	    //String null_query = "SELECT * FROM " +
+	    //	tableName + " WHERE (" + sqlName("id") + " = 0);";
+	    String null_query = "SELECT * FROM " + tableName + " LIMIT 1;";
 
 	    response.addInfo(key="QUERY", new TableInfo(key, query));
 	    st = conn.createStatement();
@@ -770,12 +771,14 @@ System.err.println ("query(): '" + query + "'\n");
 	    md = rs.getMetaData();
 
 	    // Walk through the resultset and output each row.
-	    while (rs.next()) { 
+	    int recnum = (maxrec > 0) ? maxrec : 1;
+	    while (rs.next() && recnum > 0) { 
 	        double pos_ra=ra, pos_dec=dec;
 		double scale, ra_dist, dec_dist;
 		double obj_ra, obj_dec, dx;
 		long naxis1, naxis2;
 
+                recnum -= 1;
 
 		// Refine the spatial ROI intersect test.  The initial
 		// SQL spatial query is crude but fast, and may find images
