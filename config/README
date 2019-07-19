@@ -4,7 +4,8 @@
 The files in this directory provide a working example of how to
 dyamically configure the DALServer framework for a local installation.
 
-    ivoa-dal.war	   This is a pre-built copy of the DALServer Web-app.
+    ivoa-dal.war	   This is a pre-built copy of the current 
+                           DALServer Web-app.
 
     server.conf            Root configuration file
     <service>.conf         Configuration file for the named service
@@ -21,7 +22,7 @@ be modified from what is shown here if necessary.
 
 
 Quick Start
-------------
+===========
 
 The following steps will suffice to get up and going quickly.   This
 assumes that you already have a Java applications server or servlet
@@ -62,9 +63,121 @@ the table output by the service, if desired.  This assumes that you
 already have a DBMS table loaded to be exposed via the VO cone search
 protocol.
 
+Creating Database Connections
+=============================
+
+The DALServer application will need to query the database for each service
+created.  Depending on the type of DAL service, the details of how to connect
+will vary with each configuration file.
+
+SCS and SIA Configurations
+--------------------------
+
+Services such as SCS (Simple Cone Search) and SIA (Simple Image Access)
+put database connection information directly in the "<service-name>.conf" 
+file, e.g.
+
+For an SIA service:
+
+    dbType = PostgreSQL
+    jdbcUrl = jdbc:postgresql://<FQDN_or_IP_address>:5432/
+    jdbcDriver = org.postgresql.Driver
+    dbName = <dn_name>
+    dbUser = <db_user>
+    dbPassword = <db_password>
+    tableName = ivoa_nsa.siav1
+    tableConfig = siapv1.tab
+
+where
+
+    dbType 		type of database (PostgreSQL/MySQL/Oracle)
+    jdbcUrl 		JDBC URL of connection
+    jdbcDriver 		JDBC driver to use to connect
+    dbName 		name of the database
+    dbUser 		name of the database user used to connect
+    dbPassword 		database user password
+    tableName 		table name to query for service ('siav1' recommended)
+    tableConfig 	config table for resultset
+
+
+For an SCS service:
+
+    dbType = PostgreSQL
+    jdbcUrl = jdbc:postgresql://<FQDN_or_IP_address>:5432/
+    jdbcDriver = org.postgresql.Driver
+    dbName = <dn_name>
+    dbUser = <db_user>
+    dbPassword = <db_password>
+    schemaName = ivoa_nsa
+    tableName = siav1
+    tableConfig = siapv1.tab
+    idColumn = id
+    raColumn = ra
+    decColumn = dec
+
+where
+
+    dbType 		type of database (PostgreSQL/MySQL/Oracle)
+    jdbcUrl 		JDBC URL of connection
+    jdbcDriver 		JDBC driver to use to connect
+    dbName 		name of the database
+    dbUser 		name of the database user used to connect
+    dbPassword 		database user password
+    schemaName 		name of schema containing table
+    tableName 		table name to query for service
+    id			Object ID column name
+    ra			Column containing RA value (decimal degrees)
+    dec			Column containing Dec value (decimal degrees)
+
+[NOTE:  The use of a 'schemaName' field may depend on the type of database
+	used on the backend.  Values for all field must be set for the 
+	specific database, the above are simply examples.]
+
+
+TAP Service Configuration
+-------------------------
+
+For TAP services, the database connection is defined in the Tomcat
+configuration as a 'Resource' with the required name "jdbc/postgresql-tapuser".
+There are two files to be modified in the Tomcat config directory (typically
+either /opt/tomcat/conf or /etc/tomcat depending on the Linux distro):
+
+Add the following to the 'server.xml' file:
+
+      <GlobalNamingResources>
+        <Resource name="jdbc/postgresql-tapuser"
+            auth="Container" type="javax.sql.DataSource"
+            driverClassName="org.postgresql.Driver"
+            url="jdbc:postgresql://localhost:5432/tapdb"
+            username="dluser"
+            password="dlpassword"
+            maxTotal="100" maxIdle="20" maxWaitMillis="-1"
+            connectionTimeout="30000"
+            validationQuery="SELECT 1"
+            testOnBorrow="true" />
+      </GlobalNamingResources>
+
+    The "<GlobalNamingResources>" tag should already exist, you will need to
+    add the "<Resource>" tag with the appropriate information for your system.
+
+
+Add the following to the 'context.xml' file:
+
+      <Context>
+          <ResourceLink name="jdbc/tapuser"
+              global="jdbc/postgresql-tapuser"
+              type="javax.sql.DataSource" />
+      </Context>
+
+    The "<Context>" tag should already exist, you will need to add the
+    "<ResourceLink>" tag to link the 'jdbc/tapuser' required by the TAP
+    service to the connection information in the "<Resource>" found in 
+    the server.xml file.
+
+
 
 Examples
----------
+========
 
 The following should normally be left alone as they are used to verify
 basic functioning of the DALServer installation, but may be commented
@@ -99,10 +212,7 @@ Configuration Files
 -------------------
 
 The service configuration files are largely self-explanatory and contain
-inline comments where needed.  More comprehensive documentation is
-available on the DALServer Web site at:
-
-    http://vaosa-vm1.aoc.nrao.edu/vo/dalserver
+inline comments where needed. 
 
 For details on the VO standards see:  http://www.ivoa.net/Documents/
 
